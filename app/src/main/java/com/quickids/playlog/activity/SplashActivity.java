@@ -14,8 +14,13 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        prepareApp();
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
+
+    // APP 실행 준비 과정
+    private void prepareApp(){}
 }

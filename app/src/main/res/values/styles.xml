@@ -1,17 +1,24 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Splash 화면 테마 : Action Bar 제거한 기본 테마 기반 -->
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <!-- background_splash 수정 시 Splash 화면 변함 -->
+        <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
+
+    <!-- Main 화면 테마 -->
+    <style name="MainTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- Splash 화면 테마 : Action Bar 제거한 기본 테마 기반 -->
-    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
-        <!-- background_splash 수정 시 Splash 화면 변함 -->
-        <item name="android:windowBackground">@drawable/background_splash</item>
+    <!--Action Bar 제거된 화면 테마 -->
+    <style name="SubTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
 </resources>
