@@ -9,8 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MainTheme">
-        <activity android:name=".activity.TrainingActivity"></activity>
-        <activity android:name=".activity.MatchActivity" />
+        <activity android:name=".activity.RecordActivity"></activity>
         <activity
             android:name=".activity.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -21,6 +20,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.MainActivity" />
+        <activity
+            android:name=".activity.HolderActivity"
+            android:theme="@style/SubTheme" />
     </application>
 
 </manifest>

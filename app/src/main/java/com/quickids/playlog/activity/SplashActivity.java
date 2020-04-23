@@ -16,6 +16,7 @@ public class SplashActivity extends AppCompatActivity {
 
         prepareApp();
 
+        // Main Activity 실행
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

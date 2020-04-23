@@ -6,11 +6,11 @@ import android.os.Bundle;
 
 import com.quickids.playlog.R;
 
-public class TrainingActivity extends AppCompatActivity {
+public class RecordActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_training);
+        setContentView(R.layout.activity_record);
     }
 }

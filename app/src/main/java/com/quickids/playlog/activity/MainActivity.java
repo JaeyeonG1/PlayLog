@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.service.autofill.FieldClassification;
 import android.view.View;
 import android.widget.Button;
 
@@ -31,11 +30,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btn_match:
-                Intent intentMatch = new Intent(this, MatchActivity.class);
+                Intent intentMatch = new Intent(this, HolderActivity.class);
+                intentMatch.putExtra("ActivityCode", 1000);
                 startActivity(intentMatch);
                 break;
             case R.id.btn_training:
-                Intent intentTraining = new Intent(this, TrainingActivity.class);
+                Intent intentTraining = new Intent(this, HolderActivity.class);
+                intentTraining.putExtra("ActivityCode", 2000);
                 startActivity(intentTraining);
                 break;
         }
