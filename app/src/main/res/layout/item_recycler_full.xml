@@ -13,16 +13,19 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/text_name"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
         <TextView
+            android:id="@+id/text_length"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
         <TextView
+            android:id="@+id/text_day"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"/>
@@ -31,8 +34,8 @@
 
     <ImageView
         android:id="@+id/image_thumb"
-        android:layout_width="00dp"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="3">
-    </ImageView>
+        android:layout_weight="3"/>
+
 </LinearLayout>

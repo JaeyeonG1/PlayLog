@@ -9,13 +9,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.quickids.playlog.R;
 import com.quickids.playlog.adapter.ViewPagerAdapter;
 import com.quickids.playlog.fragment.FullFragment;
 import com.quickids.playlog.fragment.HighlightFragment;
+import com.quickids.playlog.fragment.OriginalFragment;
+import com.quickids.playlog.fragment.SlowMotionFragment;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,6 @@ public class HolderActivity extends AppCompatActivity {
     public static final int MATCH_CODE = 1000;
     public static final int TRAINING_CODE = 2000;
 
-    int activityCode;
     ArrayList<Fragment> fragList;
     ArrayList<String> fragNameList;
     Toolbar tb;
@@ -46,8 +46,7 @@ public class HolderActivity extends AppCompatActivity {
         // 어댑터에 추가할 항목 설정
         fragList = new ArrayList<>();
         fragNameList = new ArrayList<>();
-        activityCode = getIntent().getExtras().getInt("ActivityCode");
-        setByActivityCode(activityCode);
+        setByActivityCode(getIntent().getExtras().getInt("ActivityCode"));
 
         // Viewpager 를 FragmentManager 로 사용하기 위해 설정
         vp = findViewById(R.id.viewPager_holder);
@@ -61,21 +60,21 @@ public class HolderActivity extends AppCompatActivity {
 
     // MainActivity 에서 전달받은 ActivityCode 에 따라 기본 설정
     private void setByActivityCode(int activityCode){
-        if(activityCode == MATCH_CODE){
+        if(activityCode == MATCH_CODE){ // Match Activity 실행
             fragList.add(new FullFragment());
             fragList.add(new HighlightFragment());
             fragNameList.add("FullMatch");
             fragNameList.add("Highlight");
             getSupportActionBar().setTitle("Match");
         }
-        else if(activityCode == TRAINING_CODE){
-            fragList.add(new FullFragment());
-            fragList.add(new HighlightFragment());
+        else if(activityCode == TRAINING_CODE){ // Training Activity 실행
+            fragList.add(new OriginalFragment());
+            fragList.add(new SlowMotionFragment());
             fragNameList.add("Original");
             fragNameList.add("SlowMotion");
             getSupportActionBar().setTitle("Training");
         }
-        else{
+        else{ // Code 정상 아닐 시 종료
             finish();
         }
     }
@@ -91,10 +90,10 @@ public class HolderActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home :
+            case android.R.id.home : // 뒤로가기 버튼 클릭
                 finish();
                 return true ;
-            case R.id.action_record :
+            case R.id.action_record : // 녹화 버튼 클릭
                 Intent intentMatch = new Intent(this, RecordActivity.class);
                 startActivity(intentMatch);
                 return true ;
