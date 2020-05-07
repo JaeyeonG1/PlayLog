@@ -4,18 +4,17 @@
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- background_splash 수정 시 Splash 화면 변함 -->
         <item name="android:windowBackground">@drawable/background_splash</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <!-- Main 화면 테마 -->
     <style name="MainTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <!-- Sub 화면 테마 -->
-    <style name="SubTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <!-- Camera 화면 테마 -->
@@ -23,6 +22,7 @@
         <!-- Customize your theme here. -->
         <item name="windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
 </resources>

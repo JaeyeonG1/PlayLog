@@ -12,8 +12,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 
 import com.quickids.playlog.R;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -35,7 +39,10 @@ public class SplashActivity extends AppCompatActivity {
                 requestPermissions(PERMISSIONS, PERMISSIONS_REQ_CODE);
             }
             else{
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                checkAppFolders();
+
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("ActivityCode", 1000);
                 startActivity(intent);
                 finish();
             }
@@ -76,7 +83,8 @@ public class SplashActivity extends AppCompatActivity {
                         showPermissionDialog("앱을 실행하기 위해 권한이 필요합니다.");
                     }
                     else{
-                        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.putExtra("ActivityCode", 1000);
                         startActivity(intent);
                         finish();
                     }
@@ -105,5 +113,20 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
         builder.create().show();
+    }
+
+    // PlayLog 전용 외부저장소 폴더 확인 및 생성
+    private void checkAppFolders() {
+        ArrayList<File> folders = new ArrayList<>();
+
+        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos"));
+        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Match"));
+        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Training"));
+
+        for(File folder : folders){
+            if(!folder.exists()){
+                folder.mkdirs();
+            }
+        }
     }
 }

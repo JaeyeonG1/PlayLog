@@ -120,6 +120,10 @@ public class RecordActivity extends AppCompatActivity {
             }
         });
 
+        /** Video Record **/
+
+
+
         /** Image Analyser **/
         // ImageAnalysis Configuration 생성
         ImageAnalysisConfig imgAConfig = new ImageAnalysisConfig.Builder().setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE).build();
