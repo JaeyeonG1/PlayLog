@@ -6,4 +6,6 @@
 
     <color name="colorSplash">#567890</color>
     <color name="colorMyDark">#222222</color>
+
+    <color name="colorWhite">#FFFFFF</color>
 </resources>

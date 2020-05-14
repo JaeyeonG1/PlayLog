@@ -24,8 +24,10 @@ public class SplashActivity extends AppCompatActivity {
     final static int PERMISSIONS_REQ_CODE = 1000;
     // 필요한 권한 목록 리스트
     String[] PERMISSIONS = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.RECORD_AUDIO
     };
 
     @Override

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 홈 버튼 활성화
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_24dp); // 아이콘 대체
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_24dp); // 아이콘 대체
 
         // 어댑터에 추가할 항목 설정
         fragList = new ArrayList<>();
@@ -73,11 +74,13 @@ public class MainActivity extends AppCompatActivity {
             fragList.add(new HighlightFragment());
             fragList.add(new OriginalFragment());
             fragList.add(new SlowMotionFragment());
-            fragNameList.add("FullMatch");
+            fragNameList.add("Match");
             fragNameList.add("Highlight");
             fragNameList.add("Original");
             fragNameList.add("Slow");
-            getSupportActionBar().setTitle("Match");
+            getSupportActionBar().setBackgroundDrawable(
+                    new ColorDrawable(getResources().getColor(R.color.colorWhite)));
+            getSupportActionBar().setTitle("");
         }
         else{ // Code 정상 아닐 시 종료
             finish();
@@ -99,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(drawerView);
                 return true ;
             case R.id.action_record : // 녹화 버튼 클릭
-                Intent intentMatch = new Intent(this, RecordActivity.class);
+                Intent intentMatch = new Intent(this, CvRecordActivity.class);
                 startActivity(intentMatch);
                 return true ;
             default :
