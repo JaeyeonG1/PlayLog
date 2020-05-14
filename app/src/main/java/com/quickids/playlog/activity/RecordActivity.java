@@ -5,11 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.CameraX;
-import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.ImageAnalysisConfig;
-import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCaptureConfig;
-import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.camera.core.VideoCapture;
@@ -19,6 +14,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -28,12 +24,24 @@ import android.widget.Toast;
 
 import com.quickids.playlog.R;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @SuppressLint("RestrictedApi")
 public class RecordActivity extends AppCompatActivity {
+
+    private final static String TAG = "OpenCV";
 
     private TextureView cameraTV;
     private ImageButton btnCapture;
@@ -42,6 +50,7 @@ public class RecordActivity extends AppCompatActivity {
     private VideoCapture videoCapture;
 
     private boolean isRecording;
+    private boolean isOpenCvLoaded = false;
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -58,15 +67,29 @@ public class RecordActivity extends AppCompatActivity {
 
         isRecording = false;
 
+        // 타이머 주기에 따라 조건 검사 및 프레임 분석
+        TimerTask tt = new TimerTask() {
+            @Override
+            public void run() {
+                if(isRecording){
+                    analyzeFrame();
+                }
+            }
+        };
+        Timer timer = new Timer();
+        // 2초 단위로 분석
+        timer.schedule(tt, 0, 2000);
+
+        // 카메라 프로필 설정
         startCamera();
     }
 
+    /**
+     * CameraX Profile Setting & Open Preview
+     * */
     private void startCamera() {
         CameraX.unbindAll();
 
-        /**
-         * Preview Viewfinder Setting
-         * */
         // Preview Configuration 생성
 
         // => 정확히 어떻게 작동하는지 알아볼 것
@@ -87,14 +110,14 @@ public class RecordActivity extends AppCompatActivity {
                         parent.removeView(cameraTV);
                         parent.addView(cameraTV, 0);
 
+                        Log.i("onUpdated : ", "good");
+
                         cameraTV.setSurfaceTexture(output.getSurfaceTexture());
                         updateTransform();
                     }
                 });
 
-        /**
-         *  Video Record Setting
-         *  */
+        // VideoCapture Config 생성
         VideoCaptureConfig videoCaptureConfig =
                 new VideoCaptureConfig.Builder()
                 .setTargetAspectRatio(aspectRatio)
@@ -106,25 +129,12 @@ public class RecordActivity extends AppCompatActivity {
         videoCapture = new VideoCapture(videoCaptureConfig);
         btnCapture.setOnClickListener(setRecordBtn(videoCapture));
 
-        /**
-         * Image Analyser
-         * */
-        // ImageAnalysis Configuration 생성
-        ImageAnalysisConfig imgAConfig = new ImageAnalysisConfig.Builder().setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE).build();
-        ImageAnalysis analysis = new ImageAnalysis(imgAConfig);
-
-        analysis.setAnalyzer(executor,
-                new ImageAnalysis.Analyzer(){
-                    @Override
-                    public void analyze(ImageProxy image, int rotationDegrees){
-                        //y'all can add code to analyse stuff here idek go wild.
-                    }
-                }
-        );
-
         CameraX.bindToLifecycle(this, preview, videoCapture);
     }
 
+    /**
+     * Set Record Button Listener
+     * */
     private View.OnClickListener setRecordBtn(final VideoCapture videoCapture){
         View.OnClickListener videoBtnListener = new View.OnClickListener(){
             @SuppressLint("RestrictedApi")
@@ -171,6 +181,21 @@ public class RecordActivity extends AppCompatActivity {
         return videoBtnListener;
     }
 
+    /**
+     * Frame Analyzer Setting
+     * */
+    private void analyzeFrame(){
+        Mat mat = new Mat();
+        Utils.bitmapToMat(cameraTV.getBitmap(), mat);
+
+        File path = new File(""+Environment.getExternalStorageDirectory());
+        File file = new File(path, System.currentTimeMillis() + ".png");
+
+        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGBA2GRAY);
+
+        Imgcodecs.imwrite(file.toString(), mat);
+    }
+
     private void updateTransform(){
         Matrix matrix = new Matrix();
         float centerX = cameraTV.getMeasuredWidth() / 2f;
@@ -198,5 +223,36 @@ public class RecordActivity extends AppCompatActivity {
 
         matrix.postRotate((float)rotationDgr, centerX, centerY);
         cameraTV.setTransform(matrix);
+    }
+
+    /**
+     * Overrides for OpenCV Settings
+     * */
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                    Log.i(TAG, "OpenCV loaded successfully");
+                    break;
+                default:
+                    super.onManagerConnected(status);
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        if (!OpenCVLoader.initDebug()) {
+            Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
+        } else {
+            Log.d(TAG, "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            isOpenCvLoaded = true;
+        }
     }
 }

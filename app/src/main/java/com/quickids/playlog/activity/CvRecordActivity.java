@@ -1,12 +1,9 @@
 package com.quickids.playlog.activity;
 
 import android.content.pm.PackageManager;
-import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,28 +11,16 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.quickids.playlog.R;
-
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
-import org.opencv.videoio.VideoCapture;
-import org.opencv.videoio.VideoWriter;
-import org.opencv.videoio.Videoio;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
 import static android.Manifest.permission.CAMERA;
-import static org.opencv.imgproc.Imgproc.rectangle;
 
 // OpenCV Camera 이용을 위한 implement
 public class CvRecordActivity extends AppCompatActivity
@@ -43,9 +28,9 @@ public class CvRecordActivity extends AppCompatActivity
 
     private static final String TAG = "AndroidOpenCv";
 
+    private boolean isRecording;
+
     private CameraBridgeViewBase mCameraView; // 카메라 프리뷰 제공 클래스
-    private MediaRecorder mRecorder;
-    private Surface mSurface = null;
 
     public native void ConvertRGBtoGray(long matAddrInput, long matAddrResult);
 
@@ -63,6 +48,8 @@ public class CvRecordActivity extends AppCompatActivity
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        isRecording = false;
 
         mCameraView = findViewById(R.id.camera_view);
         mCameraView.setVisibility(SurfaceView.VISIBLE);
@@ -146,9 +133,12 @@ public class CvRecordActivity extends AppCompatActivity
     // 카메라의 프레임 전달 필요 시 호출
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        Mat mInputMat = inputFrame.gray();
+        Mat mInputMat = inputFrame.rgba();
+        Mat mResultMat = new Mat(mInputMat.rows(), mInputMat.cols(), mInputMat.type());
 
-        return mInputMat;
+        ConvertRGBtoGray(mInputMat.getNativeObjAddr(), mResultMat.getNativeObjAddr());
+
+        return mResultMat;
     }
 
     protected List<? extends CameraBridgeViewBase> getCameraViewList() {
@@ -167,18 +157,18 @@ public class CvRecordActivity extends AppCompatActivity
         }
     }
 
-    public void setRecorder(MediaRecorder rec) {
-        mRecorder = rec;
-        if (mRecorder != null) {
-            mSurface = mRecorder.getSurface();
-        }
-    }
-
     @Override
     public void onClick(View view) {
-        File videoFile = new File(Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".mp4");
         switch (view.getId()){
             case R.id.btn_record:
+                if(!isRecording){
+
+                }
+                else{
+
+                }
+                isRecording = !isRecording;
+
                 break;
         }
     }

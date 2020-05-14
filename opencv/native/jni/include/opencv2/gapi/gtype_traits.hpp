@@ -17,7 +17,6 @@
 #include <opencv2/gapi/gopaque.hpp>
 #include <opencv2/gapi/streaming/source.hpp>
 #include <opencv2/gapi/gcommon.hpp>
-#include <opencv2/gapi/own/convert.hpp>
 
 namespace cv
 {
@@ -36,6 +35,7 @@ namespace detail
         GOBJREF,      // <internal> reference to object
         GMAT,         // a cv::GMat
         GMATP,        // a cv::GMatP
+        GFRAME,       // a cv::GFrame
         GSCALAR,      // a cv::GScalar
         GARRAY,       // a cv::GArrayU  (note - exactly GArrayU,  not GArray<T>!)
         GOPAQUE,      // a cv::GOpaqueU (note - exactly GOpaqueU, not GOpaque<T>!)
@@ -58,6 +58,11 @@ namespace detail
     template<>           struct GTypeTraits<cv::GMatP>
     {
         static constexpr const ArgKind kind = ArgKind::GMATP;
+        static constexpr const GShape shape = GShape::GMAT;
+    };
+    template<>           struct GTypeTraits<cv::GFrame>
+    {
+        static constexpr const ArgKind kind = ArgKind::GFRAME;
         static constexpr const GShape shape = GShape::GMAT;
     };
     template<>           struct GTypeTraits<cv::GScalar>
@@ -105,10 +110,9 @@ namespace detail
     // and GMat behavior is correct for GMatP)
     template<typename T> struct GTypeOf;
 #if !defined(GAPI_STANDALONE)
-    template<>           struct GTypeOf<cv::Mat>               { using type = cv::GMat;      };
     template<>           struct GTypeOf<cv::UMat>              { using type = cv::GMat;      };
 #endif // !defined(GAPI_STANDALONE)
-    template<>           struct GTypeOf<cv::gapi::own::Mat>    { using type = cv::GMat;      };
+    template<>           struct GTypeOf<cv::Mat>               { using type = cv::GMat;      };
     template<>           struct GTypeOf<cv::Scalar>            { using type = cv::GScalar;   };
     template<typename U> struct GTypeOf<std::vector<U> >       { using type = cv::GArray<U>; };
     template<typename U> struct GTypeOf                        { using type = cv::GOpaque<U>;};

@@ -159,7 +159,8 @@ public class Imgproc {
             COLORMAP_CIVIDIS = 17,
             COLORMAP_TWILIGHT = 18,
             COLORMAP_TWILIGHT_SHIFTED = 19,
-            COLORMAP_TURBO = 20;
+            COLORMAP_TURBO = 20,
+            COLORMAP_DEEPGREEN = 21;
 
 
     // C++: enum HistCompMethods
@@ -4302,7 +4303,7 @@ public class Imgproc {
      *
      * where
      *
-     * \(\alpha = \fork{\frac{1}{\texttt{ksize.width*ksize.height}}}{when \texttt{normalize=true}}{1}{otherwise}\)
+     * \(\alpha = \begin{cases} \frac{1}{\texttt{ksize.width*ksize.height}} &amp; \texttt{when } \texttt{normalize=true}  \\1 &amp; \texttt{otherwise}\end{cases}\)
      *
      * Unnormalized box filter is useful for computing various integral characteristics over each pixel
      * neighborhood, such as covariance matrices of image derivatives (used in dense optical flow
@@ -4331,7 +4332,7 @@ public class Imgproc {
      *
      * where
      *
-     * \(\alpha = \fork{\frac{1}{\texttt{ksize.width*ksize.height}}}{when \texttt{normalize=true}}{1}{otherwise}\)
+     * \(\alpha = \begin{cases} \frac{1}{\texttt{ksize.width*ksize.height}} &amp; \texttt{when } \texttt{normalize=true}  \\1 &amp; \texttt{otherwise}\end{cases}\)
      *
      * Unnormalized box filter is useful for computing various integral characteristics over each pixel
      * neighborhood, such as covariance matrices of image derivatives (used in dense optical flow
@@ -4359,7 +4360,7 @@ public class Imgproc {
      *
      * where
      *
-     * \(\alpha = \fork{\frac{1}{\texttt{ksize.width*ksize.height}}}{when \texttt{normalize=true}}{1}{otherwise}\)
+     * \(\alpha = \begin{cases} \frac{1}{\texttt{ksize.width*ksize.height}} &amp; \texttt{when } \texttt{normalize=true}  \\1 &amp; \texttt{otherwise}\end{cases}\)
      *
      * Unnormalized box filter is useful for computing various integral characteristics over each pixel
      * neighborhood, such as covariance matrices of image derivatives (used in dense optical flow
@@ -4386,7 +4387,7 @@ public class Imgproc {
      *
      * where
      *
-     * \(\alpha = \fork{\frac{1}{\texttt{ksize.width*ksize.height}}}{when \texttt{normalize=true}}{1}{otherwise}\)
+     * \(\alpha = \begin{cases} \frac{1}{\texttt{ksize.width*ksize.height}} &amp; \texttt{when } \texttt{normalize=true}  \\1 &amp; \texttt{otherwise}\end{cases}\)
      *
      * Unnormalized box filter is useful for computing various integral characteristics over each pixel
      * neighborhood, such as covariance matrices of image derivatives (used in dense optical flow
@@ -6346,7 +6347,7 @@ public class Imgproc {
      *
      * The function does actually compute correlation, not the convolution:
      *
-     * \(\texttt{dst} (x,y) =  \sum _{ \stackrel{0\leq x' &lt; \texttt{kernel.cols},}{0\leq y' &lt; \texttt{kernel.rows}} }  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
+     * \(\texttt{dst} (x,y) =  \sum _{ \substack{0\leq x' &lt; \texttt{kernel.cols}\\{0\leq y' &lt; \texttt{kernel.rows}}}}  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
      *
      * That is, the kernel is not mirrored around the anchor point. If you need a real convolution, flip
      * the kernel using #flip and set the new anchor to `(kernel.cols - anchor.x - 1, kernel.rows -
@@ -6381,7 +6382,7 @@ public class Imgproc {
      *
      * The function does actually compute correlation, not the convolution:
      *
-     * \(\texttt{dst} (x,y) =  \sum _{ \stackrel{0\leq x' &lt; \texttt{kernel.cols},}{0\leq y' &lt; \texttt{kernel.rows}} }  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
+     * \(\texttt{dst} (x,y) =  \sum _{ \substack{0\leq x' &lt; \texttt{kernel.cols}\\{0\leq y' &lt; \texttt{kernel.rows}}}}  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
      *
      * That is, the kernel is not mirrored around the anchor point. If you need a real convolution, flip
      * the kernel using #flip and set the new anchor to `(kernel.cols - anchor.x - 1, kernel.rows -
@@ -6415,7 +6416,7 @@ public class Imgproc {
      *
      * The function does actually compute correlation, not the convolution:
      *
-     * \(\texttt{dst} (x,y) =  \sum _{ \stackrel{0\leq x' &lt; \texttt{kernel.cols},}{0\leq y' &lt; \texttt{kernel.rows}} }  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
+     * \(\texttt{dst} (x,y) =  \sum _{ \substack{0\leq x' &lt; \texttt{kernel.cols}\\{0\leq y' &lt; \texttt{kernel.rows}}}}  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
      *
      * That is, the kernel is not mirrored around the anchor point. If you need a real convolution, flip
      * the kernel using #flip and set the new anchor to `(kernel.cols - anchor.x - 1, kernel.rows -
@@ -6448,7 +6449,7 @@ public class Imgproc {
      *
      * The function does actually compute correlation, not the convolution:
      *
-     * \(\texttt{dst} (x,y) =  \sum _{ \stackrel{0\leq x' &lt; \texttt{kernel.cols},}{0\leq y' &lt; \texttt{kernel.rows}} }  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
+     * \(\texttt{dst} (x,y) =  \sum _{ \substack{0\leq x' &lt; \texttt{kernel.cols}\\{0\leq y' &lt; \texttt{kernel.rows}}}}  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
      *
      * That is, the kernel is not mirrored around the anchor point. If you need a real convolution, flip
      * the kernel using #flip and set the new anchor to `(kernel.cols - anchor.x - 1, kernel.rows -
