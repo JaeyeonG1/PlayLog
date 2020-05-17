@@ -1,18 +1,33 @@
 package com.quickids.playlog.model;
 
-public class Video {
-    private String path;
-    private String name;
-    private String datetime;
-    private String runningTime;
-    private int size;
+import android.graphics.Bitmap;
 
-    public Video(String path, String name, String datetime, String runningTime, int size) {
+public class MatchVideo implements Video{
+    Bitmap thumbnail;
+    String path; //absolute path
+    String name; //file name
+    String date; //save date
+    String runningTime; //running time of video
+    String extn; //file extension of video
+    int size; // size for getting byte
+    final int videoType = 100;
+
+    public MatchVideo(Bitmap thumbnail, String path, String name, String date, String runningTime, String extn, int size) {
+        this.thumbnail = thumbnail;
         this.path = path;
         this.name = name;
-        this.datetime = datetime;
+        this.date = date;
         this.runningTime = runningTime;
+        this.extn = extn;
         this.size = size;
+    }
+
+    public Bitmap getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(Bitmap thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
     public String getPath() {
@@ -31,12 +46,12 @@ public class Video {
         this.name = name;
     }
 
-    public String getDatetime() {
-        return datetime;
+    public String getDate() {
+        return date;
     }
 
-    public void setDatetime(String datetime) {
-        this.datetime = datetime;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getRunningTime() {
@@ -47,6 +62,14 @@ public class Video {
         this.runningTime = runningTime;
     }
 
+    public String getExtn() {
+        return extn;
+    }
+
+    public void setExtn(String extn) {
+        this.extn = extn;
+    }
+
     public int getSize() {
         return size;
     }
@@ -54,4 +77,9 @@ public class Video {
     public void setSize(int size) {
         this.size = size;
     }
+
+    public int getVideoType() {
+        return videoType;
+    }
+
 }

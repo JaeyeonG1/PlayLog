@@ -123,6 +123,7 @@ public class SplashActivity extends AppCompatActivity {
 
         folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos"));
         folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Match"));
+        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Highlight"));
         folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Training"));
 
         for(File folder : folders){
