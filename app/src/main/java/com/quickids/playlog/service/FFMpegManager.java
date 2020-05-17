@@ -10,6 +10,8 @@ import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 
+import java.io.File;
+
 public class FFMpegManager {
     private FFmpeg ffmpeg;
     private Context context;
@@ -86,12 +88,28 @@ public class FFMpegManager {
 //                "22050",
 //                destPath
 //        };
-        String[] complexCommand = {"-i", originalPath, "-ss", "" + startMs / 1000, "-t", "" + endMs / 1000, destPath};
-        execFFmpegBinary(complexCommand);
+        if(endMs==0){
+            String[] complexCommand = {"-i", originalPath, "-ss", "" + startMs / 1000, destPath};
+            execFFmpegBinary(complexCommand);
+
+        }else{
+            String[] complexCommand = {"-i", originalPath, "-ss", "" + startMs / 1000, "-t", "" + endMs / 1000, destPath};
+            execFFmpegBinary(complexCommand);
+        }
     }
 
-    public void executeMergeVideoCommand(){
-
+    public void executeMergeVideoCommand(String destPath, String joinPath){
+        String[] complexCommand = {"-f",
+                "concat",
+                "-i",
+                joinPath,
+                "-c",
+                "copy",
+                destPath
+        };
+        System.out.println(joinPath);
+        System.out.println(destPath);
+        execFFmpegBinary(complexCommand);
     }
 
     public void execFFmpegBinary(final String[] command){

@@ -14,6 +14,8 @@ import com.quickids.playlog.model.TrainingVideo;
 import com.quickids.playlog.model.Video;
 import com.quickids.playlog.service.Editor;
 
+import java.io.IOException;
+
 public class EditorActivity extends AppCompatActivity {
 
     TextView tempJob;
@@ -48,7 +50,11 @@ public class EditorActivity extends AppCompatActivity {
                         video.setPath(filePath);
                         video.setName(name);
                         video.setExtn(extn);
-                        editor.processTrainingVideo(video);
+                        try {
+                            editor.processTrainingVideo(video);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
                 break;
