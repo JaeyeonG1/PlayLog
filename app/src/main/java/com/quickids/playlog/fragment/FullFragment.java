@@ -14,12 +14,6 @@ public class FullFragment extends Fragment {
     public FullFragment() {
     }
 
-    public static HighlightFragment newInstance() {
-        HighlightFragment fragment = new HighlightFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +25,6 @@ public class FullFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_full, container, false);
+        return inflater.inflate(R.layout.fragment_match, container, false);
     }
 }

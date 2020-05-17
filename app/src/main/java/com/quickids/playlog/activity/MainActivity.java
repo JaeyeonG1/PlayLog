@@ -19,8 +19,8 @@ import com.quickids.playlog.R;
 import com.quickids.playlog.adapter.ViewPagerAdapter;
 import com.quickids.playlog.fragment.FullFragment;
 import com.quickids.playlog.fragment.HighlightFragment;
-import com.quickids.playlog.fragment.OriginalFragment;
-import com.quickids.playlog.fragment.SlowMotionFragment;
+import com.quickids.playlog.fragment.MatchFragment;
+import com.quickids.playlog.fragment.TrainingFragment;
 
 import java.util.ArrayList;
 
@@ -71,13 +71,13 @@ public class MainActivity extends AppCompatActivity {
     private void setFragments(int activityCode){
         if(activityCode == RIGHT_CODE){
             fragList.add(new FullFragment());
+            fragList.add(new MatchFragment());
             fragList.add(new HighlightFragment());
-            fragList.add(new OriginalFragment());
-            fragList.add(new SlowMotionFragment());
+            fragList.add(new TrainingFragment());
+            fragNameList.add("News");
             fragNameList.add("Match");
-            fragNameList.add("Highlight");
-            fragNameList.add("Original");
-            fragNameList.add("Slow");
+            fragNameList.add("HighLight");
+            fragNameList.add("Training");
             getSupportActionBar().setBackgroundDrawable(
                     new ColorDrawable(getResources().getColor(R.color.colorWhite)));
             getSupportActionBar().setTitle("");

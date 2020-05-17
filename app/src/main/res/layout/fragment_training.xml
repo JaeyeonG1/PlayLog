@@ -3,11 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".fragment.HighlightFragment">
+    tools:context=".fragment.TrainingFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_full"
+        android:id="@+id/recycler_training"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

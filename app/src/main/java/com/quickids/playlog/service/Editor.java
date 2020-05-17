@@ -10,18 +10,21 @@ public class Editor {
     private FFMpegManager ffMpegManager;
     private Context context;
     public Editor(Context c){
-        ffMpegManager.loadFFMpegBinary(c);
         this.context = c;
+        ffMpegManager = new FFMpegManager();
+        ffMpegManager.loadFFMpegBinary(c);
     }
     // 훈련 영상 슬로우 모션 효과 적용
     public void processTrainingVideo(TrainingVideo tv){
 
-        String fileName;
-        String fileExtn;
-
-        //String currentPath = getPath();
-        String destPath = null;
-
+        String filePath = tv.getPath();
+        String extn = tv.getExtn();
+        String name = tv.getName();
+        String currentPath = filePath+name+"."+extn;
+        String destPath = filePath+"Processed/"+name+"(SlowMotion)."+extn;
+        String tempPath = filePath+"Processed/Temp/"+name+"temp."+extn;
+        System.out.println(tempPath);
+        ffMpegManager.executeSplitVideoCommand(currentPath,tempPath,800,3000); //슛 감지 후 1초간 잘라내기
         //ffMpegManager.executeSlowMotionVideoCommand(currentPath,destPath);
 
     }

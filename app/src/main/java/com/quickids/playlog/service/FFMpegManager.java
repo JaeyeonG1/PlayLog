@@ -14,6 +14,7 @@ public class FFMpegManager {
     private FFmpeg ffmpeg;
     private Context context;
     private ProgressDialog progressDialog;
+
     public void loadFFMpegBinary(Context c){
         this.context = c;
         this.progressDialog = new ProgressDialog(context);
@@ -61,12 +62,32 @@ public class FFMpegManager {
                 "-vcodec",
                 "mpeg4",
                 destPath};
-
         execFFmpegBinary(complexCommand);
+
     }
 
-    public void executeSplitVideoCommand(){
-
+    public void executeSplitVideoCommand(String originalPath, String destPath, int startMs, int endMs){
+//        String[] complexCommand = {"-ss",
+//                "" + startMs / 1000,
+//                "-y",
+//                "-i",
+//                originalPath,
+//                "-t",
+//                "" + (endMs - startMs) / 1000,
+//                "-vcodec",
+//                "mpeg4",
+//                "-b:v",
+//                "2097152",
+//                "-b:a",
+//                "48000",
+//                "-ac",
+//                "2",
+//                "-ar",
+//                "22050",
+//                destPath
+//        };
+        String[] complexCommand = {"-i", originalPath, "-ss", "" + startMs / 1000, "-t", "" + endMs / 1000, destPath};
+        execFFmpegBinary(complexCommand);
     }
 
     public void executeMergeVideoCommand(){
@@ -100,7 +121,8 @@ public class FFMpegManager {
                 }
             });
         }catch (FFmpegCommandAlreadyRunningException e){
-
+            System.out.println("에러메시지");
+            e.printStackTrace();
         }
     }
 

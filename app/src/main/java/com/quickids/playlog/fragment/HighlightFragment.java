@@ -14,13 +14,6 @@ public class HighlightFragment extends Fragment {
     public HighlightFragment() {
     }
 
-    public static HighlightFragment newInstance() {
-        HighlightFragment fragment = new HighlightFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

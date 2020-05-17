@@ -13,14 +13,14 @@ public interface Video {
     public void setDate(String date);
     public void setRunningTime(String runningTime);
     public void setExtn(String extn);
-    public void setSize(int size);
+    public void setSize(long size);
     public void setThumbnail(Bitmap thumbnail);
     String getPath();
     String getName();
     String getDate();
     String getRunningTime();
     String getExtn();
-    int getSize();
+    long getSize();
     Bitmap getThumbnail();
     int getVideoType();
 }

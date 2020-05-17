@@ -2,17 +2,22 @@ package com.quickids.playlog.model;
 
 import android.graphics.Bitmap;
 
-public class TrainingVideo implements Video{
+import java.io.Serializable;
+
+public class TrainingVideo implements Video, Serializable {
     Bitmap thumbnail;
     String path; //absolute path
     String name; //file name
     String date; //save date
     String runningTime; //running time of video
     String extn; //file extension of video
-    int size; // size for getting byte
+    long size; // size for getting byte
     final int videoType = 200;
 
-    public TrainingVideo(Bitmap thumbnail, String path, String name, String date, String runningTime, String extn, int size) {
+    public TrainingVideo(){
+
+    }
+    public TrainingVideo(Bitmap thumbnail, String path, String name, String date, String runningTime, String extn, long size) {
         this.thumbnail = thumbnail;
         this.path = path;
         this.name = name;
@@ -70,11 +75,11 @@ public class TrainingVideo implements Video{
         this.extn = extn;
     }
 
-    public int getSize() {
+    public long getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(long size) {
         this.size = size;
     }
 

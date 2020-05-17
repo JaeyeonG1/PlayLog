@@ -17,14 +17,14 @@ import java.util.ArrayList;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoListViewHolder> {
 
-    private ArrayList<Video> videoList = null;
+    private ArrayList<Video> videoList = null; //비디오 리스트 데이터
+    private OnItemClickListener listener = null;
 
-    VideoListAdapter(ArrayList<Video> videoList){
+    public VideoListAdapter(ArrayList<Video> videoList){
         this.videoList = videoList;
     }
     @NonNull
     @Override
-
     public VideoListAdapter.VideoListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         Context context = parent.getContext();
@@ -64,6 +64,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         return videoList.size();
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener = listener;
+    }
+    public Video getItem(int position){return this.videoList.get(position);}
+
+    //뷰홀더 정의
     public class VideoListViewHolder extends RecyclerView.ViewHolder{
         ImageView thumbnail;
         TextView videoName;
@@ -72,12 +78,42 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         TextView videoDate;
         VideoListViewHolder(View itemView){
             super(itemView);
+            //리스너 정의
+            itemView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    int pos = getAdapterPosition();
+                    if(pos != RecyclerView.NO_POSITION){
+                        if(listener != null){
+                            listener.onItemClick(v, pos);
+                        }
+                    }
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener(){
+                @Override
+                public boolean onLongClick(View view) {
+                    int pos = getAdapterPosition();
+                    if(pos !=RecyclerView.NO_POSITION){
+                        if(listener != null){
+                            listener.onItemLongClick(view, pos);
+                        }
+                    }
+                    return false;
+                }
+
+            });
             thumbnail = itemView.findViewById(R.id.thumbnail);
             videoName = itemView.findViewById(R.id.video_name);
             videoType = itemView.findViewById(R.id.video_type);
             videoRunningTime = itemView.findViewById(R.id.video_time);
             videoDate = itemView.findViewById(R.id.video_date);
         }
+    }
 
+    //리스너 인터페이스 정의
+    public interface OnItemClickListener{
+        void onItemClick(View v, int position);
+        void onItemLongClick(View v, int position);
     }
 }

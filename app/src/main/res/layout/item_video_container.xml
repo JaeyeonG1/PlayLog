@@ -3,10 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
+    android:background="?attr/selectableItemBackground"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         app:cardCornerRadius="10dp">
@@ -16,13 +18,9 @@
             android:orientation="horizontal">
             <ImageView
                 android:layout_width="150dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:id="@+id/thumbnail"/>
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
             <!--동영상 제목, 타입, 재생시간, 수정일자-->
             <LinearLayout
                 android:layout_gravity="center"

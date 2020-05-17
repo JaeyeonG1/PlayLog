@@ -122,9 +122,13 @@ public class SplashActivity extends AppCompatActivity {
         ArrayList<File> folders = new ArrayList<>();
 
         folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos"));
-        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Match"));
-        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Highlight"));
-        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Training"));
+        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Match")); //전체 경기영상 폴더
+        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Match/Temp")); //하이라이트 제작을 위한 임시폴더
+        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Highlight")); //하이라이트 영상 폴더
+        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Training")); //훈련 영상 폴더
+        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Training/Processed")); //효과 적용 영상폴더
+        folders.add(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PlayLogVideos/Training/Processed/Temp")); //효과 적용 위한 임시폴더
+
 
         for(File folder : folders){
             if(!folder.exists()){
