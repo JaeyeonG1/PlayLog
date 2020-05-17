@@ -1,4 +1,4 @@
 package com.quickids.playlog.model;
 
-public interface Video {
+public class HighlightVideo {
 }
