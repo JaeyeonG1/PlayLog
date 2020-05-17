@@ -24,14 +24,6 @@ import android.widget.Toast;
 
 import com.quickids.playlog.R;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
-
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -185,15 +177,7 @@ public class RecordActivity extends AppCompatActivity {
      * Frame Analyzer Setting
      * */
     private void analyzeFrame(){
-        Mat mat = new Mat();
-        Utils.bitmapToMat(cameraTV.getBitmap(), mat);
 
-        File path = new File(""+Environment.getExternalStorageDirectory());
-        File file = new File(path, System.currentTimeMillis() + ".png");
-
-        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGBA2GRAY);
-
-        Imgcodecs.imwrite(file.toString(), mat);
     }
 
     private void updateTransform(){
@@ -223,36 +207,5 @@ public class RecordActivity extends AppCompatActivity {
 
         matrix.postRotate((float)rotationDgr, centerX, centerY);
         cameraTV.setTransform(matrix);
-    }
-
-    /**
-     * Overrides for OpenCV Settings
-     * */
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                    Log.i(TAG, "OpenCV loaded successfully");
-                    break;
-                default:
-                    super.onManagerConnected(status);
-                    break;
-            }
-        }
-    };
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        if (!OpenCVLoader.initDebug()) {
-            Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
-        } else {
-            Log.d(TAG, "OpenCV library found inside package. Using it!");
-            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-            isOpenCvLoaded = true;
-        }
     }
 }

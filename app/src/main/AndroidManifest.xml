@@ -38,9 +38,6 @@
         <activity
             android:name=".activity.MainActivity"
             android:theme="@style/MainTheme" />
-        <activity android:name=".activity.CvRecordActivity"
-            android:screenOrientation="landscape"
-            android:configChanges="keyboardHidden|orientation"  />
         <activity android:name=".activity.RecordActivity"/>
     </application>
 
