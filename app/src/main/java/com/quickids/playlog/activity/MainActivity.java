@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(drawerView);
                 return true ;
             case R.id.action_record : // 녹화 버튼 클릭
-                Intent intentMatch = new Intent(this, CvRecordActivity.class);
+                Intent intentMatch = new Intent(this, RecordActivity.class);
                 startActivity(intentMatch);
                 return true ;
             default :
