@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,10 +39,27 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     @Override
     public void onBindViewHolder(@NonNull VideoListAdapter.VideoListViewHolder holder, int position) {
         Video selectedItem = videoList.get(position);
+        holder.thumbnail.setImageBitmap(selectedItem.getThumbnail());
         holder.videoName.setText(selectedItem.getName());
         holder.videoDate.setText(selectedItem.getDate());
         holder.videoRunningTime.setText(selectedItem.getRunningTime());
-        int type = selectedItem.get
+        int type = selectedItem.getVideoType();
+        switch (type){
+            case 100:
+                holder.videoType.setText("전체 경기 영상");
+                break;
+            case 101:
+                holder.videoType.setText("하이라이트 영상");
+                break;
+            case 200:
+                holder.videoType.setText("훈련 영상");
+                break;
+            case 201:
+                holder.videoType.setText("Slow Motion");
+                break;
+            default:
+                break;
+        }
     }
     @Override
     public int getItemCount() {
@@ -49,12 +67,14 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     }
 
     public class VideoListViewHolder extends RecyclerView.ViewHolder{
+        ImageView thumbnail;
         TextView videoName;
         TextView videoType;
         TextView videoRunningTime;
         TextView videoDate;
         VideoListViewHolder(View itemView){
             super(itemView);
+            thumbnail = itemView.findViewById(R.id.thumbnail);
             videoName = itemView.findViewById(R.id.video_name);
             videoType = itemView.findViewById(R.id.video_type);
             videoRunningTime = itemView.findViewById(R.id.video_time);
