@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.quickids.playlog.R;
 import com.quickids.playlog.model.Video;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoListViewHolder> {

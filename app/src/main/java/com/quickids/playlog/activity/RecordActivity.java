@@ -1,15 +1,5 @@
 package com.quickids.playlog.activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.core.AspectRatio;
-import androidx.camera.core.CameraX;
-import androidx.camera.core.Preview;
-import androidx.camera.core.PreviewConfig;
-import androidx.camera.core.VideoCapture;
-import androidx.camera.core.VideoCaptureConfig;
-
 import android.annotation.SuppressLint;
 import android.graphics.Matrix;
 import android.os.Bundle;
@@ -21,6 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.AspectRatio;
+import androidx.camera.core.CameraX;
+import androidx.camera.core.Preview;
+import androidx.camera.core.PreviewConfig;
+import androidx.camera.core.VideoCapture;
+import androidx.camera.core.VideoCaptureConfig;
 
 import com.quickids.playlog.R;
 

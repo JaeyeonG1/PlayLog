@@ -2,8 +2,8 @@ package com.quickids.playlog.service;
 
 import android.content.Context;
 
-import com.quickids.playlog.model.TrainingVideo;
 import com.quickids.playlog.model.MatchVideo;
+import com.quickids.playlog.model.TrainingVideo;
 
 public class Editor {
 
@@ -19,10 +19,10 @@ public class Editor {
         String fileName;
         String fileExtn;
 
-        String currentPath = getPath();
+        //String currentPath = getPath();
         String destPath = null;
 
-        ffMpegManager.executeSlowMotionVideoCommand(currentPath,destPath);
+        //ffMpegManager.executeSlowMotionVideoCommand(currentPath,destPath);
 
     }
     // 하이라이트 영상 생성

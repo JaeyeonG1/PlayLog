@@ -2,7 +2,7 @@ package com.quickids.playlog.model;
 
 import android.graphics.Bitmap;
 
-public class MatchVideo implements Video{
+public class MatchVideo implements Video {
     Bitmap thumbnail;
     String path; //absolute path
     String name; //file name
