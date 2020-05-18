@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 public class Editor {
 
@@ -37,16 +38,34 @@ public class Editor {
 //
 //        ffMpegManager.executeSlowMotionVideoCommand(mid,filePath+"Processed/Temp/"+name+"temp03."+extn);
 //
-        FileOutputStream fos = new FileOutputStream(filePath+"Processed/Temp/join.txt",true);
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos));
-        writer.write("file "+"'"+top+"'"+"\n");
-        writer.write("file "+"'"+filePath+"Processed/Temp/"+name+"temp03."+extn+"'"+"\n");
-        writer.write("file "+"'"+bottom+"'");
-        writer.flush();
-        writer.close();
-        fos.close();
-        ffMpegManager.executeMergeVideoCommand(destPath,filePath+"Processed/Temp/join.txt");
 
+        ArrayList<String> cmd = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        mid = filePath+"Processed/Temp/"+name+"temp03."+extn;
+        String fileList[] = {top, mid, bottom};
+        for(int i = 0; i < fileList.length; i++){
+            cmd.add("-i");
+            cmd.add(fileList[i]);
+            sb.append("[").append(i).append(":0] [").append(i).append(":1]");
+        }
+        sb.append(" concat=n=").append(fileList.length).append(":v=1:a=1 [v] [a]");
+        cmd.add("-filter_complex");
+        cmd.add(sb.toString());
+        cmd.add("-map");
+        cmd.add("[v]");
+        cmd.add("-map");
+        cmd.add("[a]");
+        cmd.add("-preset");
+        cmd.add("ultrafast");
+        cmd.add(destPath);
+
+        sb = new StringBuilder();
+        for (String str : cmd)
+        {
+            sb.append(str).append(" ");
+        }
+        String[] command = cmd.toArray(new String[cmd.size()]);
+        ffMpegManager.executeMergeVideoCommand(command);
     }
     // 하이라이트 영상 생성
     public void createHighlightVideo(MatchVideo v){

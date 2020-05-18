@@ -98,18 +98,8 @@ public class FFMpegManager {
         }
     }
 
-    public void executeMergeVideoCommand(String destPath, String joinPath){
-        String[] complexCommand = {"-f",
-                "concat",
-                "-i",
-                joinPath,
-                "-c",
-                "copy",
-                destPath
-        };
-        System.out.println(joinPath);
-        System.out.println(destPath);
-        execFFmpegBinary(complexCommand);
+    public void executeMergeVideoCommand(String[] command){
+        execFFmpegBinary(command);
     }
 
     public void execFFmpegBinary(final String[] command){
