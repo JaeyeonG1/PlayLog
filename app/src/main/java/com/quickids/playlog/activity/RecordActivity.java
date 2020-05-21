@@ -1,9 +1,12 @@
 package com.quickids.playlog.activity;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
@@ -23,8 +26,12 @@ import androidx.camera.core.VideoCapture;
 import androidx.camera.core.VideoCaptureConfig;
 
 import com.quickids.playlog.R;
+import com.quickids.playlog.model.Classifier;
+import com.quickids.playlog.model.ObjectDetector;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -34,6 +41,11 @@ import java.util.concurrent.Executors;
 public class RecordActivity extends AppCompatActivity {
 
     private final static String TAG = "OpenCV";
+    // Configuration values for the prepackaged SSD model.
+    private static final int TF_OD_API_INPUT_INPUT = 300;
+    private static final boolean TF_OD_API_IS_QUANTIZED = false;
+    private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
+    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/label_map.txt";
 
     private TextureView cameraTV;
     private ImageButton btnCapture;
@@ -45,6 +57,11 @@ public class RecordActivity extends AppCompatActivity {
     private boolean isOpenCvLoaded = false;
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    private Classifier detector;
+
+    private Handler handler;
+    private HandlerThread handlerThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +75,26 @@ public class RecordActivity extends AppCompatActivity {
         aspectRatio = AspectRatio.RATIO_16_9;
 
         isRecording = false;
+
+
+
+        try {
+            detector =
+                    ObjectDetector.create(
+                            getAssets(),
+                            TF_OD_API_MODEL_FILE,
+                            TF_OD_API_LABELS_FILE,
+                            TF_OD_API_INPUT_INPUT,
+                            TF_OD_API_IS_QUANTIZED);
+        } catch (final IOException e) {
+            e.printStackTrace();
+            Log.e("error", "Exception initializing classifier!");
+            Toast toast =
+                    Toast.makeText(
+                            getApplicationContext(), "Classifier could not be initialized", Toast.LENGTH_SHORT);
+            toast.show();
+            finish();
+        }
 
         // 타이머 주기에 따라 조건 검사 및 프레임 분석
         TimerTask tt = new TimerTask() {
@@ -74,6 +111,8 @@ public class RecordActivity extends AppCompatActivity {
 
         // 카메라 프로필 설정
         startCamera();
+
+
     }
 
     /**
@@ -177,6 +216,44 @@ public class RecordActivity extends AppCompatActivity {
      * Frame Analyzer Setting
      * */
     private void analyzeFrame(){
+        runInBackground(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        Bitmap currentBitmap = cameraTV.getBitmap();
+
+                        int width = 300; // 축소시킬 너비
+                        int height = 300; // 축소시킬 높이
+                        float bmpWidth = currentBitmap.getWidth();
+                        float bmpHeight = currentBitmap.getHeight();
+
+                        Log.d("cameraTV", bmpWidth + ", " + bmpHeight);
+
+                        if (bmpWidth > width) {
+                            // 원하는 너비보다 클 경우의 설정
+                            float mWidth = bmpWidth / 100;
+                            float scale = width/ mWidth;
+                            bmpWidth *= (scale / 100);
+                        }
+                        if (bmpHeight > height) {
+                            // 원하는 높이보다 클 경우의 설정
+                            float mHeight = bmpHeight / 100;
+                            float scale = height/ mHeight;
+                            bmpHeight *= (scale / 100);
+                        }
+
+                        Bitmap resizedBmp = Bitmap.createScaledBitmap(currentBitmap, (int) bmpWidth, (int) bmpHeight, true);
+
+                        Log.d("resizeBmp", resizedBmp.getWidth() + ", " + resizedBmp.getHeight());
+
+                        final List<Classifier.Recognition> results = detector.recognizeImage(resizedBmp);
+
+                        for (final Classifier.Recognition result : results) {
+                            Log.d("DetectorActivity", result.toString());
+                        }
+                    }
+                }
+        );
 
     }
 
@@ -207,5 +284,55 @@ public class RecordActivity extends AppCompatActivity {
 
         matrix.postRotate((float)rotationDgr, centerX, centerY);
         cameraTV.setTransform(matrix);
+    }
+
+    @Override
+    public synchronized void onStart() {
+        Log.d("", "onStart " + this);
+        super.onStart();
+    }
+
+    @Override
+    public synchronized void onResume() {
+        Log.d("", "onResume " + this);
+        super.onResume();
+
+        handlerThread = new HandlerThread("inference");
+        handlerThread.start();
+        handler = new Handler(handlerThread.getLooper());
+    }
+
+    @Override
+    public synchronized void onPause() {
+        Log.d("", "onPause " + this);
+
+        handlerThread.quitSafely();
+        try {
+            handlerThread.join();
+            handlerThread = null;
+            handler = null;
+        } catch (final InterruptedException e) {
+            Log.e("", e + "Exception!");
+        }
+
+        super.onPause();
+    }
+
+    @Override
+    public synchronized void onStop() {
+        Log.d("", "onStop " + this);
+        super.onStop();
+    }
+
+    @Override
+    public synchronized void onDestroy() {
+        Log.d("", "onDestroy " + this);
+        super.onDestroy();
+    }
+
+    protected synchronized void runInBackground(final Runnable r) {
+        if (handler != null) {
+            handler.post(r);
+        }
     }
 }
