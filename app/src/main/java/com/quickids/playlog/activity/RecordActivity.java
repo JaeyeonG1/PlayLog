@@ -2,7 +2,11 @@ package com.quickids.playlog.activity;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -28,9 +32,13 @@ import androidx.camera.core.VideoCaptureConfig;
 import com.quickids.playlog.R;
 import com.quickids.playlog.model.Classifier;
 import com.quickids.playlog.model.ObjectDetector;
+import com.quickids.playlog.painter.ImageUtils;
+import com.quickids.playlog.painter.MultiBoxTracker;
+import com.quickids.playlog.painter.OverlayView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -63,6 +71,14 @@ public class RecordActivity extends AppCompatActivity {
     private Handler handler;
     private HandlerThread handlerThread;
 
+    // for painter
+    private MultiBoxTracker tracker;
+
+    OverlayView trackingOverlay;
+
+    private Matrix frameToCropTransform;
+    private Matrix cropToFrameTransform;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,8 +91,6 @@ public class RecordActivity extends AppCompatActivity {
         aspectRatio = AspectRatio.RATIO_16_9;
 
         isRecording = false;
-
-
 
         try {
             detector =
@@ -95,6 +109,33 @@ public class RecordActivity extends AppCompatActivity {
             toast.show();
             finish();
         }
+
+        // painter 를 위한 선언
+        frameToCropTransform =
+                ImageUtils.getTransformationMatrix(
+                        1080, 2019,
+                        300, 300,
+                        0, false);
+
+        cropToFrameTransform = new Matrix();
+        frameToCropTransform.invert(cropToFrameTransform);
+
+        trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
+        trackingOverlay.addCallback(
+                new OverlayView.DrawCallback() {
+                    @Override
+                    public void drawCallback(final Canvas canvas) {
+                        tracker.draw(canvas);
+//                        if (isDebug()) {
+//                            tracker.drawDebug(canvas);
+//                        }
+                    }
+                });
+
+        tracker = new MultiBoxTracker(this);
+
+        // 임의값 준것임
+        tracker.setFrameConfiguration(2019, 1080, 0);
 
         // 타이머 주기에 따라 조건 검사 및 프레임 분석
         TimerTask tt = new TimerTask() {
@@ -248,9 +289,44 @@ public class RecordActivity extends AppCompatActivity {
 
                         final List<Classifier.Recognition> results = detector.recognizeImage(resizedBmp);
 
-                        for (final Classifier.Recognition result : results) {
+                        /*for (final Classifier.Recognition result : results) {
                             Log.d("DetectorActivity", result.toString());
+                        }*/
+
+                        Bitmap cropCopyBitmap = Bitmap.createBitmap(currentBitmap);
+                        final Canvas canvas = new Canvas(cropCopyBitmap);
+                        final Paint paint = new Paint();
+                        paint.setColor(Color.RED);
+                        paint.setStyle(Paint.Style.STROKE);
+                        paint.setStrokeWidth(2.0f);
+
+                        float minimumConfidence = 0.03f;
+
+                        final List<Classifier.Recognition> mappedRecognitions = new LinkedList<Classifier.Recognition>();
+
+                        // 여기서 프레임에서 detecting 된것을 판단하고
+                        // 그에 맞는 행동을 선언하면 될듯
+                        // 현재는 minimumConfidence 보다 큰 경우 화면에 그려주는 과정
+                        for (final Classifier.Recognition result : results) {
+                            final RectF location = result.getLocation();
+                            Log.d("DetectorActivity", result.toString());
+                            if (location != null && result.getConfidence() >= minimumConfidence) {
+                                //canvas.drawRect(location, paint);
+
+                                Log.d("crop location", location.toString());
+                                // (300x300)에서의 location 을 preview(1080x2019)로 변환
+                                cropToFrameTransform.mapRect(location);
+
+                                Log.d("preview location", location.toString());
+
+
+                                result.setLocation(location);
+                                mappedRecognitions.add(result);
+                            }
                         }
+
+                        tracker.trackResults(mappedRecognitions, 0);
+                        trackingOverlay.postInvalidate();
                     }
                 }
         );
