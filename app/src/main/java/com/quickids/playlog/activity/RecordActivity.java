@@ -54,6 +54,14 @@ public class RecordActivity extends AppCompatActivity {
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
     private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
     private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/label_map.txt";
+    // minimumConfidence
+    private static final double MINIMUM_CONFIDENCE = 0.5f;
+    // preview size
+    private static final int PREVIEW_WIDTH = 1080;
+    private static final int PREVIEW_HEIGHT = 2019;
+    // 줄이는 size
+    private static final int RESIZE_WIDTH = 300;
+    private static final int RESIZE_HEIGHT = 300;
 
     private TextureView cameraTV;
     private ImageButton btnCapture;
@@ -111,12 +119,14 @@ public class RecordActivity extends AppCompatActivity {
         }
 
         // painter 를 위한 선언
+        // preview(1080x2019) 를 (300x300) 으로 변환하는 matrix
         frameToCropTransform =
                 ImageUtils.getTransformationMatrix(
-                        1080, 2019,
-                        300, 300,
+                        PREVIEW_WIDTH, PREVIEW_HEIGHT,
+                        RESIZE_WIDTH, RESIZE_HEIGHT,
                         0, false);
 
+        // (300x300) 를 preview 로 변환하는 matrix
         cropToFrameTransform = new Matrix();
         frameToCropTransform.invert(cropToFrameTransform);
 
@@ -126,16 +136,11 @@ public class RecordActivity extends AppCompatActivity {
                     @Override
                     public void drawCallback(final Canvas canvas) {
                         tracker.draw(canvas);
-//                        if (isDebug()) {
-//                            tracker.drawDebug(canvas);
-//                        }
                     }
                 });
 
         tracker = new MultiBoxTracker(this);
-
-        // 임의값 준것임
-        tracker.setFrameConfiguration(2019, 1080, 0);
+        tracker.setFrameConfiguration(PREVIEW_WIDTH, PREVIEW_HEIGHT, 0);
 
         // 타이머 주기에 따라 조건 검사 및 프레임 분석
         TimerTask tt = new TimerTask() {
@@ -148,12 +153,10 @@ public class RecordActivity extends AppCompatActivity {
         };
         Timer timer = new Timer();
         // 2초 단위로 분석
-        timer.schedule(tt, 0, 2000);
+        timer.schedule(tt, 0, 200);
 
         // 카메라 프로필 설정
         startCamera();
-
-
     }
 
     /**
@@ -261,76 +264,56 @@ public class RecordActivity extends AppCompatActivity {
                 new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap currentBitmap = cameraTV.getBitmap();
+                        Bitmap previewBitmap = cameraTV.getBitmap();
 
-                        int width = 300; // 축소시킬 너비
-                        int height = 300; // 축소시킬 높이
-                        float bmpWidth = currentBitmap.getWidth();
-                        float bmpHeight = currentBitmap.getHeight();
+                        Log.d("previewBitmap", previewBitmap.getWidth() + ", " + previewBitmap.getHeight());
 
-                        Log.d("cameraTV", bmpWidth + ", " + bmpHeight);
+                        // 카메라 촬영 size 를 모델의 input size(300x300) 으로 변환하는 과정
+                        Bitmap resizedBmp = Bitmap.createScaledBitmap(previewBitmap, RESIZE_WIDTH, RESIZE_HEIGHT, true);
 
-                        if (bmpWidth > width) {
-                            // 원하는 너비보다 클 경우의 설정
-                            float mWidth = bmpWidth / 100;
-                            float scale = width/ mWidth;
-                            bmpWidth *= (scale / 100);
-                        }
-                        if (bmpHeight > height) {
-                            // 원하는 높이보다 클 경우의 설정
-                            float mHeight = bmpHeight / 100;
-                            float scale = height/ mHeight;
-                            bmpHeight *= (scale / 100);
-                        }
-
-                        Bitmap resizedBmp = Bitmap.createScaledBitmap(currentBitmap, (int) bmpWidth, (int) bmpHeight, true);
-
-                        Log.d("resizeBmp", resizedBmp.getWidth() + ", " + resizedBmp.getHeight());
-
+                        // object detection
                         final List<Classifier.Recognition> results = detector.recognizeImage(resizedBmp);
 
-                        /*for (final Classifier.Recognition result : results) {
-                            Log.d("DetectorActivity", result.toString());
-                        }*/
-
-                        Bitmap cropCopyBitmap = Bitmap.createBitmap(currentBitmap);
-                        final Canvas canvas = new Canvas(cropCopyBitmap);
-                        final Paint paint = new Paint();
-                        paint.setColor(Color.RED);
-                        paint.setStyle(Paint.Style.STROKE);
-                        paint.setStrokeWidth(2.0f);
-
-                        float minimumConfidence = 0.03f;
-
+                        // 일정 조건을 만족하는 결과(minmum confidence 이상)만 저장하는 list
                         final List<Classifier.Recognition> mappedRecognitions = new LinkedList<Classifier.Recognition>();
+                        boolean isFirst = true;
 
-                        // 여기서 프레임에서 detecting 된것을 판단하고
-                        // 그에 맞는 행동을 선언하면 될듯
-                        // 현재는 minimumConfidence 보다 큰 경우 화면에 그려주는 과정
                         for (final Classifier.Recognition result : results) {
+                            // 실시간으로 확인하기 위해 화면에 detecting 된 것을 그려줌
                             final RectF location = result.getLocation();
                             Log.d("DetectorActivity", result.toString());
-                            if (location != null && result.getConfidence() >= minimumConfidence) {
-                                //canvas.drawRect(location, paint);
-
-                                Log.d("crop location", location.toString());
+                            // location 이 존재하고 minimumConfidence 보다 큰 경우
+                            if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE) {
                                 // (300x300)에서의 location 을 preview(1080x2019)로 변환
                                 cropToFrameTransform.mapRect(location);
 
-                                Log.d("preview location", location.toString());
-
-
+                                // 변환된 location 으로 변경
                                 result.setLocation(location);
+
                                 mappedRecognitions.add(result);
+
+                                if(result.getTitle() == "ball") {
+                                    // raspberryPi 와 통신
+
+                                }
+
+                                else {
+                                    if(isFirst) {
+                                        // 하이라이트 구간 추가
+
+
+                                        isFirst = false;
+                                    }
+                                }
                             }
                         }
 
+                        // detection 된거 overlay 에 그리기
                         tracker.trackResults(mappedRecognitions, 0);
                         trackingOverlay.postInvalidate();
                     }
                 }
         );
-
     }
 
     private void updateTransform(){
