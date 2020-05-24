@@ -64,7 +64,7 @@ public class RecordActivity extends AppCompatActivity {
     private static final double MINIMUM_CONFIDENCE = 0.5f;
     // preview size
     private static final int PREVIEW_WIDTH = 1080;
-    private static final int PREVIEW_HEIGHT = 2019;
+    private static final int PREVIEW_HEIGHT = 2175;
     // 줄이는 size
     private static final int RESIZE_WIDTH = 300;
     private static final int RESIZE_HEIGHT = 300;
@@ -128,10 +128,10 @@ public class RecordActivity extends AppCompatActivity {
         }
 
         // painter 를 위한 선언
-        // preview(1080x2019) 를 (300x300) 으로 변환하는 matrix
+        // preview(2175x1080) 를 (300x300) 으로 변환하는 matrix
         frameToCropTransform =
                 ImageUtils.getTransformationMatrix(
-                        PREVIEW_WIDTH, PREVIEW_HEIGHT,
+                        PREVIEW_HEIGHT, PREVIEW_WIDTH,
                         RESIZE_WIDTH, RESIZE_HEIGHT,
                         0, false);
 
@@ -155,8 +155,9 @@ public class RecordActivity extends AppCompatActivity {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
+                analyzeFrame();
                 if(isRecording){
-                    analyzeFrame();
+
                 }
             }
         };
@@ -207,7 +208,7 @@ public class RecordActivity extends AppCompatActivity {
                 .setTargetAspectRatio(aspectRatio)
                 .setLensFacing(lensFacing)
                 .setVideoFrameRate(24)
-                .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation())
+                .setTargetRotation(Surface.ROTATION_90)
                 .build();
 
         videoCapture = new VideoCapture(videoCaptureConfig);
@@ -277,7 +278,8 @@ public class RecordActivity extends AppCompatActivity {
                 new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap previewBitmap = cameraTV.getBitmap();
+                        // 반시계 방향으로 90도 돌린다.(시계 방향으로 270도 돌린다.)
+                        Bitmap previewBitmap = imgRotate(cameraTV.getBitmap(), 270);
 
                         Log.d("previewBitmap", previewBitmap.getWidth() + ", " + previewBitmap.getHeight());
 
@@ -298,7 +300,25 @@ public class RecordActivity extends AppCompatActivity {
                             // location 이 존재하고 minimumConfidence 보다 큰 경우
                             if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE) {
                                 // (300x300)에서의 location 을 preview(1080x2019)로 변환
+
+                                Log.d("befTransLocation", location.toString());
+
                                 cropToFrameTransform.mapRect(location);
+
+                                // 회전된 x,y 좌표 변환하기
+                                float left = location.left;
+                                float top = location.top;
+                                float right = location.right;
+                                float bottom = location.bottom;
+
+                                Log.d("beforeLocation", location.toString());
+
+                                location.left = PREVIEW_WIDTH - bottom;
+                                location.top = left;
+                                location.right = PREVIEW_WIDTH - top;
+                                location.bottom = right;
+
+                                Log.d("afterLocation", location.toString());
 
                                 // 변환된 location 으로 변경
                                 result.setLocation(location);
@@ -360,6 +380,19 @@ public class RecordActivity extends AppCompatActivity {
 
         matrix.postRotate((float)rotationDgr, centerX, centerY);
         cameraTV.setTransform(matrix);
+    }
+
+    private Bitmap imgRotate(Bitmap bmp, int degree){
+        int width = bmp.getWidth();
+        int height = bmp.getHeight();
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+
+        Bitmap resizedBitmap = Bitmap.createBitmap(bmp, 0, 0, width, height, matrix, true);
+        bmp.recycle();
+
+        return resizedBitmap;
     }
 
     private void saveHighlightTimes(File saveFile) {
