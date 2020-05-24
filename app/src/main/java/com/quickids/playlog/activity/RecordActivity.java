@@ -236,7 +236,7 @@ public class RecordActivity extends AppCompatActivity {
                                 // 이미지 저장 성공 시
                                 @Override
                                 public void onVideoSaved(@NonNull final File file) {
-                                    saveHighlightTimes(highlightFile);
+                                    saveHighlightTimes(highlightFile); // 비디오와 연관된 하이라이트 정보를 txt 파일로 저장
                                     runOnUiThread(new Runnable() {
                                         public void run() {
                                             String msg = "영상 저장 완료 : " + file.getAbsolutePath();
@@ -367,8 +367,18 @@ public class RecordActivity extends AppCompatActivity {
             BufferedWriter bw = new BufferedWriter(new FileWriter(saveFile, true));
 
             Iterator<Long> highlightTimeIter = highlightTimes.iterator();
-            while(highlightTimeIter.hasNext()) {
-                bw.write(String.valueOf(highlightTimeIter.next()));
+            ArrayList<HighlightTime> summariedHighlightTimes = summaryHighlight(highlightTimeIter);
+
+            final long EXPANDING_TIME = 5000; // 감지된 앞 뒤 5초를 추가로 하이라이트 영상으로 변환하기 위함
+            for(HighlightTime highlightTime: summariedHighlightTimes) {
+                long startSec = (highlightTime.getStartTime() - EXPANDING_TIME)/ 1000 ;
+                if(startSec < 0) {
+                    startSec = 0;
+                }
+                // endSec 가 비디오 시간보다 긴 것에 대한 예외처리는 video 병합하는 쪽에서 하기로 함
+                long endSec = (highlightTime.getEndTime() + EXPANDING_TIME) / 1000 ;
+                bw.write(String.valueOf(startSec)
+                        + " " + String.valueOf(endSec));
                 bw.newLine();
             }
             bw.close();
@@ -377,12 +387,26 @@ public class RecordActivity extends AppCompatActivity {
         }
     }
 
-    private ArrayList<Long> summaryHighlight(Iterator<Long> highlightTimeIter) {
-        ArrayList<Long> highlightTimes = new ArrayList<Long>();
+    private ArrayList<HighlightTime> summaryHighlight(Iterator<Long> highlightTimeIter) {
 
-        HighlightTime highlightTime = new HighlightTime();
+        final long correlation = 10000; // 10초(10000ms)안에 감지되면 연관되어 있다고 본다.
+
+        long startTime = 0;
+        long endTime = Long.MAX_VALUE;
+        HighlightTime highlightTime = new HighlightTime(startTime, endTime);
+        ArrayList<HighlightTime> highlightTimes = new ArrayList<HighlightTime>();
+
         while(highlightTimeIter.hasNext()) {
-
+            long time = highlightTimeIter.next();
+            if(highlightTime.getEndTime() + correlation < time) {
+                startTime = time;
+                endTime = startTime;
+                highlightTime = new HighlightTime(startTime, endTime);
+                highlightTimes.add(highlightTime);
+            } else {
+                endTime = time;
+                highlightTime.setEndTime(endTime);
+            }
         }
 
         return highlightTimes;
