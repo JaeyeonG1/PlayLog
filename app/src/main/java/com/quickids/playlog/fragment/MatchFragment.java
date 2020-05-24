@@ -6,6 +6,7 @@ import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,8 @@ public class MatchFragment extends Fragment {
         String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/PlayLogVideos/Match/";
         File directory = new File(absolutePath);
         File[] files = directory.listFiles();
+
+        Log.d("MatchFragment", files.length + "");
 
         for(int i = 0; i < files.length; i++){
             if(!files[i].isDirectory()){

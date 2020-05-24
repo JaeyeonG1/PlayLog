@@ -31,17 +31,23 @@ import androidx.camera.core.VideoCaptureConfig;
 
 import com.quickids.playlog.R;
 import com.quickids.playlog.model.Classifier;
+import com.quickids.playlog.model.HighlightTime;
 import com.quickids.playlog.model.ObjectDetector;
 import com.quickids.playlog.painter.ImageUtils;
 import com.quickids.playlog.painter.MultiBoxTracker;
 import com.quickids.playlog.painter.OverlayView;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -71,6 +77,9 @@ public class RecordActivity extends AppCompatActivity {
 
     private boolean isRecording;
     private boolean isOpenCvLoaded = false;
+
+    private long recordStartTime;
+    private TreeSet<Long> highlightTimes = new TreeSet<Long>();
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -216,7 +225,10 @@ public class RecordActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!isRecording){
-                    File videoFile = new File(Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".mp4");
+                    recordStartTime = System.currentTimeMillis();
+                    String filepath = Environment.getExternalStorageDirectory() + "/PlayLogVideos/Match/";
+                    File videoFile = new File(filepath + recordStartTime  + ".mp4");
+                    File highlightFile = new File(filepath + "HighlightTimeTable/" + recordStartTime + ".txt");
                     videoCapture.startRecording(
                             videoFile,
                             executor,
@@ -224,6 +236,7 @@ public class RecordActivity extends AppCompatActivity {
                                 // 이미지 저장 성공 시
                                 @Override
                                 public void onVideoSaved(@NonNull final File file) {
+                                    saveHighlightTimes(highlightFile);
                                     runOnUiThread(new Runnable() {
                                         public void run() {
                                             String msg = "영상 저장 완료 : " + file.getAbsolutePath();
@@ -294,13 +307,17 @@ public class RecordActivity extends AppCompatActivity {
 
                                 if(result.getTitle() == "ball") {
                                     // raspberryPi 와 통신
-
+                                    // float ball_x_location = (location.left + location.right) / 2;
                                 }
 
                                 else {
                                     if(isFirst) {
                                         // 하이라이트 구간 추가
+                                        long currentTime = System.currentTimeMillis();
 
+                                        long videoTime = currentTime - recordStartTime; // 초단위로 변경
+
+                                        highlightTimes.add(videoTime);
 
                                         isFirst = false;
                                     }
@@ -343,6 +360,32 @@ public class RecordActivity extends AppCompatActivity {
 
         matrix.postRotate((float)rotationDgr, centerX, centerY);
         cameraTV.setTransform(matrix);
+    }
+
+    private void saveHighlightTimes(File saveFile) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(saveFile, true));
+
+            Iterator<Long> highlightTimeIter = highlightTimes.iterator();
+            while(highlightTimeIter.hasNext()) {
+                bw.write(String.valueOf(highlightTimeIter.next()));
+                bw.newLine();
+            }
+            bw.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private ArrayList<Long> summaryHighlight(Iterator<Long> highlightTimeIter) {
+        ArrayList<Long> highlightTimes = new ArrayList<Long>();
+
+        HighlightTime highlightTime = new HighlightTime();
+        while(highlightTimeIter.hasNext()) {
+
+        }
+
+        return highlightTimes;
     }
 
     @Override
