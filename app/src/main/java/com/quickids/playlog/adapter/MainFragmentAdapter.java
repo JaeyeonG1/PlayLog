@@ -7,11 +7,11 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 
-public class ViewPagerAdapter extends FragmentPagerAdapter {
+public class MainFragmentAdapter extends FragmentPagerAdapter {
     private ArrayList<Fragment> items;
     private ArrayList<String> itemNames;
 
-    public ViewPagerAdapter(@NonNull FragmentManager fm, ArrayList<Fragment> items, ArrayList<String> itemNames) {
+    public MainFragmentAdapter(@NonNull FragmentManager fm, ArrayList<Fragment> items, ArrayList<String> itemNames) {
         super(fm);
         this.items = items;
         this.itemNames = itemNames;

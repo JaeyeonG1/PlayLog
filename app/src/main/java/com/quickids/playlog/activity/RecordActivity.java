@@ -1,6 +1,7 @@
 package com.quickids.playlog.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -36,6 +37,7 @@ import com.quickids.playlog.model.ObjectDetector;
 import com.quickids.playlog.painter.ImageUtils;
 import com.quickids.playlog.painter.MultiBoxTracker;
 import com.quickids.playlog.painter.OverlayView;
+import com.quickids.playlog.service.BluetoothService;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -54,7 +56,6 @@ import java.util.concurrent.Executors;
 @SuppressLint("RestrictedApi")
 public class RecordActivity extends AppCompatActivity {
 
-    private final static String TAG = "OpenCV";
     // Configuration values for the prepackaged SSD model.
     private static final int TF_OD_API_INPUT_INPUT = 300;
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
@@ -75,8 +76,8 @@ public class RecordActivity extends AppCompatActivity {
     private AspectRatio aspectRatio;
     private VideoCapture videoCapture;
 
+    private BluetoothService bts;
     private boolean isRecording;
-    private boolean isOpenCvLoaded = false;
 
     private long recordStartTime;
     private TreeSet<Long> highlightTimes = new TreeSet<Long>();
@@ -108,6 +109,9 @@ public class RecordActivity extends AppCompatActivity {
         aspectRatio = AspectRatio.RATIO_16_9;
 
         isRecording = false;
+
+        bts = BluetoothService.getInstance(this);
+        bts.setContext(this);
 
         try {
             detector =
@@ -155,7 +159,7 @@ public class RecordActivity extends AppCompatActivity {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                analyzeFrame();
+                //analyzeFrame();
                 if(isRecording){
 
                 }
