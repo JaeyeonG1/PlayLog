@@ -16,9 +16,10 @@ public class FFMpegManager {
     private FFmpeg ffmpeg;
     private Context context;
     private ProgressDialog progressDialog;
-
-    public void loadFFMpegBinary(Context c){
+    private Editor editor;
+    public void loadFFMpegBinary(Context c, Editor editor){
         this.context = c;
+        this.editor = editor;
         this.progressDialog = new ProgressDialog(context);
         if(ffmpeg == null){
             ffmpeg = FFmpeg.getInstance(c);
@@ -60,7 +61,7 @@ public class FFMpegManager {
                 "-b:v",
                 "2097k",
                 "-r",
-                "60",
+                "30",
                 "-vcodec",
                 "mpeg4",
                 destPath};
@@ -88,12 +89,13 @@ public class FFMpegManager {
 //                "22050",
 //                destPath
 //        };
+
         if(endMs==0){
-            String[] complexCommand = {"-i", originalPath, "-ss", "" + startMs / 1000, destPath};
+            String[] complexCommand = {"-i", originalPath, "-ss", "" + startMs / 1000, "-vcodec", "copy", "-acodec", "copy", destPath};
             execFFmpegBinary(complexCommand);
 
         }else{
-            String[] complexCommand = {"-i", originalPath, "-ss", "" + startMs / 1000, "-t", "" + endMs / 1000, destPath};
+            String[] complexCommand = {"-i", originalPath, "-ss", "" + startMs / 1000, "-t", "" + endMs / 1000, "-vcodec", "copy", "-acodec", "copy", destPath};
             execFFmpegBinary(complexCommand);
         }
     }
@@ -105,14 +107,15 @@ public class FFMpegManager {
     public void execFFmpegBinary(final String[] command){
         try{
             ffmpeg.execute(command, new ExecuteBinaryResponseHandler(){
+
                 @Override
                 public void onFailure(String s) {
                     Toast.makeText(context.getApplicationContext(),"변환실패",Toast.LENGTH_SHORT).show();
                 }
                 @Override
                 public void onSuccess(String s) {
-                    Toast.makeText(context.getApplicationContext(),"변환완료", Toast.LENGTH_SHORT).show();
-
+                    editor.increaseJobCount();
+                    Toast.makeText(context.getApplicationContext(),"작업 완료 :"+Integer.toString(editor.getJobCount())+"/"+Integer.toString(editor.getRequestJobCount()), Toast.LENGTH_SHORT).show();
                 }
                 @Override
                 public void onProgress(String s) {
@@ -125,7 +128,9 @@ public class FFMpegManager {
                 }
                 @Override
                 public void onFinish() {
-                    progressDialog.dismiss();
+                    if(editor.getJobCount() == editor.getRequestJobCount()){
+                        progressDialog.dismiss();
+                    }
                 }
             });
         }catch (FFmpegCommandAlreadyRunningException e){
@@ -134,4 +139,7 @@ public class FFMpegManager {
         }
     }
 
+    public void dismissDialog(){
+        this.progressDialog.dismiss();
+    }
 }

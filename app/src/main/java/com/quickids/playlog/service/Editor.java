@@ -1,5 +1,6 @@
 package com.quickids.playlog.service;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.quickids.playlog.model.MatchVideo;
@@ -12,18 +13,29 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import static java.lang.Thread.sleep;
+
 public class Editor {
 
+    static int TRAINING = 1;
+    static int HIGHLIGHT = 2;
     private FFMpegManager ffMpegManager;
     private Context context;
-    public Editor(Context c){
+    private int jobCount ;
+    private int requestJobCount;
+    private boolean isFinish;
+    public Editor(Context c, int job){
         this.context = c;
+        jobCount = 0;
+        isFinish = false;
         ffMpegManager = new FFMpegManager();
-        ffMpegManager.loadFFMpegBinary(c);
+        ffMpegManager.loadFFMpegBinary(c, this);
     }
     // 훈련 영상 슬로우 모션 효과 적용
     public void processTrainingVideo(TrainingVideo tv) throws IOException {
 
+        //처리해야할 작업량
+        requestJobCount = 5;
         String filePath = tv.getPath();
         String extn = tv.getExtn();
         String name = tv.getName();
@@ -32,13 +44,16 @@ public class Editor {
         String top = filePath+"Processed/Temp/"+name+"temp01."+extn;
         String mid = filePath+"Processed/Temp/"+name+"temp02."+extn;
         String bottom = filePath+"Processed/Temp/"+name+"temp04."+extn;
-//        ffMpegManager.executeSplitVideoCommand(currentPath,top,0,3000);
-//        ffMpegManager.executeSplitVideoCommand(currentPath,mid,3000,4000); //슛 감지 후 1초
-//        ffMpegManager.executeSplitVideoCommand(currentPath,bottom,4000,0);
-//
-//        ffMpegManager.executeSlowMotionVideoCommand(mid,filePath+"Processed/Temp/"+name+"temp03."+extn);
-//
 
+        //객체 움직임 감지 구현부
+
+        //split video 구현부
+        ffMpegManager.executeSplitVideoCommand(currentPath,top,0,3500);
+
+        ffMpegManager.executeSplitVideoCommand(currentPath,mid,3500,2000); //슛 감지 후 1초(임시)
+        ffMpegManager.executeSplitVideoCommand(currentPath,bottom,5500,0);
+        ffMpegManager.executeSlowMotionVideoCommand(mid,filePath+"Processed/Temp/"+name+"temp03."+extn);
+        //merge video 구현부
         ArrayList<String> cmd = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         mid = filePath+"Processed/Temp/"+name+"temp03."+extn;
@@ -67,7 +82,18 @@ public class Editor {
         String[] command = cmd.toArray(new String[cmd.size()]);
         ffMpegManager.executeMergeVideoCommand(command);
     }
+
     // 하이라이트 영상 생성
     public void createHighlightVideo(MatchVideo v){
+
+    }
+    public int getRequestJobCount(){
+        return requestJobCount;
+    }
+    public void increaseJobCount(){
+        jobCount ++;
+    }
+    public int getJobCount(){
+        return jobCount;
     }
 }

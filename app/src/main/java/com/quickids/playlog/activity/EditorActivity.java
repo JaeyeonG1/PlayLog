@@ -34,7 +34,7 @@ public class EditorActivity extends AppCompatActivity {
         extn = intent.getStringExtra("extn");
         videoType = intent.getIntExtra("videoType",0);
         Toast.makeText(getApplicationContext(), "비디오 타입"+videoType+"\n filePath:"+filePath+name+extn, Toast.LENGTH_SHORT).show();
-        editor = new Editor(this); //Have to give View Context ok?
+        editor = new Editor(this, 1); //Have to give View Context ok?
 
         tempJob = (TextView) findViewById(R.id.tempJob);
         tempFilePath = (TextView)findViewById(R.id.tempFilePath);
