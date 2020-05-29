@@ -6,6 +6,13 @@
 
     <color name="colorSplash">#567890</color>
     <color name="colorMyDark">#222222</color>
-
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorIvory">#eeeeee</color>
+    <color name="colorMatch">#47C83E</color>
+    <color name="colorTraining">#6799FF</color>
+
+    <!-- Color For Bluetooth -->
+    <color name="colorBTMain">#6799FF</color>
+    <color name="colorBTDisabled">#7A818F</color>
+
 </resources>

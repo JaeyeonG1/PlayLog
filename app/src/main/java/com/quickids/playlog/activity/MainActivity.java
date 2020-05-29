@@ -1,6 +1,5 @@
 package com.quickids.playlog.activity;
 
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,7 +15,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.quickids.playlog.R;
-import com.quickids.playlog.adapter.ViewPagerAdapter;
+import com.quickids.playlog.adapter.MainFragmentAdapter;
+import com.quickids.playlog.dialog.ModeSelectionDialogFragment;
 import com.quickids.playlog.fragment.FullFragment;
 import com.quickids.playlog.fragment.HighlightFragment;
 import com.quickids.playlog.fragment.MatchFragment;
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     View drawerView;
     Toolbar toolbar;
     ViewPager viewPager;
-    ViewPagerAdapter vpAdapter;
+    MainFragmentAdapter fragmentAdapter;
     TabLayout tab;
 
     @Override
@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Viewpager 를 FragmentManager 로 사용하기 위해 설정
         viewPager = findViewById(R.id.viewPager_holder);
-        vpAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragList, fragNameList);
-        viewPager.setAdapter(vpAdapter);
+        fragmentAdapter = new MainFragmentAdapter(getSupportFragmentManager(), fragList, fragNameList);
+        viewPager.setAdapter(fragmentAdapter);
 
         // TabLayout 과 Viewpager 연동
         tab = findViewById(R.id.tabLayout_holder);
@@ -102,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(drawerView);
                 return true ;
             case R.id.action_record : // 녹화 버튼 클릭
-                Intent intentMatch = new Intent(this, RecordActivity.class);
-                startActivity(intentMatch);
+                ModeSelectionDialogFragment ms = ModeSelectionDialogFragment.getInstance();
+                ms.show(getSupportFragmentManager(), ModeSelectionDialogFragment.TAG_SELECTION_DIALOG);
                 return true ;
             default :
                 return super.onOptionsItemSelected(item) ;
