@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.quickids.playlog.R;
 import com.quickids.playlog.activity.EditorActivity;
+import com.quickids.playlog.activity.VideoPlayerActivity;
 import com.quickids.playlog.adapter.VideoListAdapter;
 import com.quickids.playlog.model.ProcessedVideo;
 import com.quickids.playlog.model.TrainingVideo;
@@ -142,6 +143,12 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
     @Override
     public void onItemClick(View v, int position) {
         Toast.makeText(getContext(), "on click", Toast.LENGTH_SHORT).show();
+        Video video = trainingVideoList.get(position);
+        String path = video.getPath();
+        Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
+        intent.putExtra("path", path);
+        startActivity(intent);
+
     }
     @Override
     public void onItemLongClick(View v, int position) {
