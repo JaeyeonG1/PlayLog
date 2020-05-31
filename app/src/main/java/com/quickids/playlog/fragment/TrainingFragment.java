@@ -142,13 +142,12 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
 
     @Override
     public void onItemClick(View v, int position) {
-        Toast.makeText(getContext(), "on click", Toast.LENGTH_SHORT).show();
+
         Video video = trainingVideoList.get(position);
-        String path = video.getPath();
+        String path = video.getPath()+video.getName()+"."+video.getExtn();
         Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
         intent.putExtra("path", path);
         startActivity(intent);
-
     }
     @Override
     public void onItemLongClick(View v, int position) {

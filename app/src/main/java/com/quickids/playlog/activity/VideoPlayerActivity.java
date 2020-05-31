@@ -52,7 +52,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         videoIndex = getIntent().getIntExtra("pos", 0);
         videoPath = getIntent().getStringExtra("path");
-
+        System.out.println("path : " + videoPath);
         handler = new Handler();
         mHandler = new Handler();
 
@@ -63,9 +63,17 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 videoIndex++;
             }
         });
+
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                setVideoProgress();
+            }
+        });
         playVideo(videoIndex);
         setPause();
         hideLayout();
+
     }
 
     //재생 함수
