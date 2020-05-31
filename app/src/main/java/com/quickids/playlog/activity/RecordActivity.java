@@ -113,6 +113,13 @@ public class RecordActivity extends AppCompatActivity {
         bts = BluetoothService.getInstance(this);
         bts.setContext(this);
 
+        // 경기 녹화일 경우 모터 방향 초기화
+        Intent prefIntent = getIntent();
+        if(prefIntent != null){
+            String msg = prefIntent.getExtras().getString("prefInfo", "null");
+            bts.sendMsg(msg);
+        }
+
         try {
             detector =
                     ObjectDetector.create(
@@ -155,22 +162,21 @@ public class RecordActivity extends AppCompatActivity {
         tracker = new MultiBoxTracker(this);
         tracker.setFrameConfiguration(PREVIEW_WIDTH, PREVIEW_HEIGHT, 0);
 
+        // 카메라 프로필 설정
+        startCamera();
+
         // 타이머 주기에 따라 조건 검사 및 프레임 분석
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                //analyzeFrame();
                 if(isRecording){
-
+                    analyzeFrame();
                 }
             }
         };
         Timer timer = new Timer();
         // 2초 단위로 분석
         timer.schedule(tt, 0, 200);
-
-        // 카메라 프로필 설정
-        startCamera();
     }
 
     /**
@@ -300,7 +306,7 @@ public class RecordActivity extends AppCompatActivity {
                         for (final Classifier.Recognition result : results) {
                             // 실시간으로 확인하기 위해 화면에 detecting 된 것을 그려줌
                             final RectF location = result.getLocation();
-                            Log.d("DetectorActivity", result.toString());
+                            //Log.d("DetectorActivity", result.toString());
                             // location 이 존재하고 minimumConfidence 보다 큰 경우
                             if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE) {
                                 // (300x300)에서의 location 을 preview(1080x2019)로 변환
@@ -329,9 +335,18 @@ public class RecordActivity extends AppCompatActivity {
 
                                 mappedRecognitions.add(result);
 
-                                if(result.getTitle() == "ball") {
+                                if(result.getTitle().equals("ball")) {
                                     // raspberryPi 와 통신
-                                    // float ball_x_location = (location.left + location.right) / 2;
+                                    float ball_x_location = (left + right) / 2;
+
+                                    Log.d("ballLocation", ball_x_location + "");
+
+                                    if(PREVIEW_HEIGHT * 0.75 < ball_x_location){
+                                        bts.sendMsg("right");
+                                    }
+                                    else if(PREVIEW_HEIGHT * 0.25 > ball_x_location){
+                                        bts.sendMsg("left");
+                                    }
                                 }
 
                                 else {

@@ -177,6 +177,7 @@ public class CamPrefFragment extends Fragment implements View.OnClickListener {
 
         if(isLeftSubmit && isRightSubmit){
             Intent intentMatch = new Intent(getActivity(), RecordActivity.class);
+            intentMatch.putExtra("prefInfo", "prefDone");
             startActivity(intentMatch);
             getActivity().finish();
         }
