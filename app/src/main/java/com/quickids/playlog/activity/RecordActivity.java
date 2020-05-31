@@ -126,7 +126,8 @@ public class RecordActivity extends AppCompatActivity {
                             getAssets(),
                             TF_OD_API_MODEL_FILE,
                             TF_OD_API_LABELS_FILE,
-                            TF_OD_API_INPUT_INPUT,
+                            2076,
+                            1080,
                             TF_OD_API_IS_QUANTIZED);
         } catch (final IOException e) {
             e.printStackTrace();
@@ -294,10 +295,10 @@ public class RecordActivity extends AppCompatActivity {
                         Log.d("previewBitmap", previewBitmap.getWidth() + ", " + previewBitmap.getHeight());
 
                         // 카메라 촬영 size 를 모델의 input size(300x300) 으로 변환하는 과정
-                        Bitmap resizedBmp = Bitmap.createScaledBitmap(previewBitmap, RESIZE_WIDTH, RESIZE_HEIGHT, true);
+                        // Bitmap resizedBmp = Bitmap.createScaledBitmap(previewBitmap, RESIZE_WIDTH, RESIZE_HEIGHT, true);
 
                         // object detection
-                        final List<Classifier.Recognition> results = detector.recognizeImage(resizedBmp);
+                        final List<Classifier.Recognition> results = detector.recognizeImage(previewBitmap);
 
                         // 일정 조건을 만족하는 결과(minmum confidence 이상)만 저장하는 list
                         final List<Classifier.Recognition> mappedRecognitions = new LinkedList<Classifier.Recognition>();
@@ -309,10 +310,9 @@ public class RecordActivity extends AppCompatActivity {
                             //Log.d("DetectorActivity", result.toString());
                             // location 이 존재하고 minimumConfidence 보다 큰 경우
                             if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE) {
-                                // (300x300)에서의 location 을 preview(1080x2019)로 변환
-
                                 Log.d("befTransLocation", location.toString());
 
+                                // (300x300)에서의 location 을 preview(1080x2019)로 변환
                                 cropToFrameTransform.mapRect(location);
 
                                 // 회전된 x,y 좌표 변환하기

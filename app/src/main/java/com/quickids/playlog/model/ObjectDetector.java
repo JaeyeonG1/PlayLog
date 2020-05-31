@@ -43,7 +43,8 @@ public class ObjectDetector implements Classifier {
     private static final int NUM_THREADS = 4;
     private boolean isModelQuantized;
     // Config values.
-    private int inputSize;
+    private int inputWidthSize;
+    private int inputHeightSize;
     // Pre-allocated buffers.
     private Vector<String> labels = new Vector<String>();
     private int[] intValues;
@@ -90,7 +91,8 @@ public class ObjectDetector implements Classifier {
             final AssetManager assetManager,
             final String modelFilename,
             final String labelFilename,
-            final int inputSize,
+            final int inputWidthSize,
+            final int inputHeightSize,
             final boolean isQuantized)
             throws IOException {
         final ObjectDetector d = new ObjectDetector();
@@ -107,7 +109,8 @@ public class ObjectDetector implements Classifier {
         br.close();
 
         // inputSize read
-        d.inputSize = inputSize;
+        d.inputWidthSize = inputWidthSize;
+        d.inputHeightSize = inputHeightSize;
 
         // model read
         try {
@@ -125,9 +128,9 @@ public class ObjectDetector implements Classifier {
         } else {
             numBytesPerChannel = 4; // Floating point
         }
-        d.imgData = ByteBuffer.allocateDirect(1  * d.inputSize * d.inputSize * 3 * numBytesPerChannel);
+        d.imgData = ByteBuffer.allocateDirect(1  * d.inputWidthSize * d.inputHeightSize * 3 * numBytesPerChannel);
         d.imgData.order(ByteOrder.nativeOrder());
-        d.intValues = new int[d.inputSize * d.inputSize];
+        d.intValues = new int[d.inputWidthSize * d.inputHeightSize];
 
         // thread 초기화 및
         d.tfLite.setNumThreads(NUM_THREADS);
@@ -152,9 +155,9 @@ public class ObjectDetector implements Classifier {
 
         // Bitmap 을 ByteBuffer 로
         imgData.rewind();
-        for (int i = 0; i < inputSize; ++i) {
-            for (int j = 0; j < inputSize; ++j) {
-                int pixelValue = intValues[i * inputSize + j];
+        for (int i = 0; i < inputHeightSize; ++i) {
+            for (int j = 0; j < inputWidthSize; ++j) {
+                int pixelValue = intValues[i * inputHeightSize + j];
                 if (isModelQuantized) {
                     // Quantized model
                     imgData.put((byte) ((pixelValue >> 16) & 0xFF));
@@ -204,10 +207,10 @@ public class ObjectDetector implements Classifier {
         for (int i = 0; i < numDetectionsOutput; ++i) {
             final RectF detection =
                     new RectF(
-                            outputLocations[0][i][1] * inputSize,
-                            outputLocations[0][i][0] * inputSize,
-                            outputLocations[0][i][3] * inputSize,
-                            outputLocations[0][i][2] * inputSize);
+                            outputLocations[0][i][1] * inputWidthSize,
+                            outputLocations[0][i][0] * inputHeightSize,
+                            outputLocations[0][i][3] * inputWidthSize,
+                            outputLocations[0][i][2] * inputHeightSize);
             // SSD Mobilenet V1 Model assumes class 0 is background class
             // in label file and class labels start from 1 to number_of_classes+1,
             // while outputClasses correspond to class index from 0 to number_of_classes
