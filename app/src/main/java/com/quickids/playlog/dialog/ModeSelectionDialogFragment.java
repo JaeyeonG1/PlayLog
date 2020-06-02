@@ -54,6 +54,7 @@ public class ModeSelectionDialogFragment extends DialogFragment implements View.
                 break;
             case R.id.btn_training:
                 Intent intentTraining = new Intent(getContext(), RecordActivity.class);
+                intentTraining.putExtra("prefInfo", "noPref");
                 startActivity(intentTraining);
                 dismiss();
                 break;

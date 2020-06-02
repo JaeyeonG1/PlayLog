@@ -29,6 +29,7 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.camera.core.VideoCapture;
 import androidx.camera.core.VideoCaptureConfig;
+import androidx.camera.core.impl.utils.executor.CameraXExecutors;
 
 import com.quickids.playlog.R;
 import com.quickids.playlog.model.Classifier;
@@ -115,8 +116,8 @@ public class RecordActivity extends AppCompatActivity {
 
         // 경기 녹화일 경우 모터 방향 초기화
         Intent prefIntent = getIntent();
-        if(prefIntent != null){
-            String msg = prefIntent.getExtras().getString("prefInfo", "null");
+        String msg = prefIntent.getExtras().getString("prefInfo", "null");
+        if(msg.equals("prefDone")){
             bts.sendMsg(msg);
         }
 
