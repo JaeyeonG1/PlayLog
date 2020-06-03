@@ -155,6 +155,9 @@ public class BTPrefFragment extends Fragment implements CompoundButton.OnChecked
                                 bts.sendMsg("left");
                             else if(counter >= 2 && counter < 4)
                                 bts.sendMsg("right");
+                            else if(counter == 4){
+                                bts.sendMsg("stop");
+                            }
                             else{
                                 bluetoothUIHandler.sendEmptyMessage(1);
                                 timer.cancel();

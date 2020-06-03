@@ -56,7 +56,7 @@ public class MatchFragment extends Fragment {
         for(int i = 0; i < files.length; i++){
             if(!files[i].isDirectory()){
                 String runningTime = getRunningTime(files[i].toString());
-                System.out.println(runningTime);
+                //System.out.println(runningTime);
                 long fileSize = files[i].length();
                 Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(files[i].toString(), MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
                 Bitmap thumbnail = ThumbnailUtils.extractThumbnail(bitmap,360,480);
