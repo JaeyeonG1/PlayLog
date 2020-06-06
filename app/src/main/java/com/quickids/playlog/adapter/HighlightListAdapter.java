@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class HighlightListAdapter extends RecyclerView.Adapter<HighlightListAdapter.HighlightListViewHolder> {
 
     ArrayList<String> list;
+    OnItemClickListener listener = null;
     public HighlightListAdapter(ArrayList<String> list){
         this.list = list;
     }
@@ -46,11 +47,29 @@ public class HighlightListAdapter extends RecyclerView.Adapter<HighlightListAdap
         return list.get(pos);
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener = listener;
+    }
+
     public class HighlightListViewHolder extends RecyclerView.ViewHolder{
         TextView highlightTime;
         public HighlightListViewHolder(@NonNull View itemView) {
             super(itemView);
             highlightTime = itemView.findViewById(R.id.higlight_time);
+            itemView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    int pos = getAdapterPosition();
+                    if(pos != RecyclerView.NO_POSITION){
+                        if(listener != null){
+                            listener.onItemClick(view, pos);
+                        }
+                    }
+                }
+            });
         }
+    }
+    public interface OnItemClickListener{
+        void onItemClick(View view, int pos);
     }
 }

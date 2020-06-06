@@ -3,6 +3,7 @@ package com.quickids.playlog.activity;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -23,7 +24,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PreviewActivity extends AppCompatActivity {
+public class PreviewActivity extends AppCompatActivity implements HighlightListAdapter.OnItemClickListener {
 
     VideoView previewView;
     ArrayList<String> highlights;
@@ -60,6 +61,7 @@ public class PreviewActivity extends AppCompatActivity {
         adapter = new HighlightListAdapter(highlights);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener(this);
         //하이라이트 리스트 초기화
 
 
@@ -198,5 +200,20 @@ public class PreviewActivity extends AppCompatActivity {
     public void onDestroy(){
         super.onDestroy();
         finish();
+    }
+
+    @Override
+    public void onItemClick(View view, int pos) {
+        String selectedPos = highlights.get(pos);
+        String[] initTime = selectedPos.split(" -");
+        String [] highlight = initTime[0].split(":");
+        highlight[2].replaceAll(" ", "");
+        int hour = Integer.parseInt(highlight[0]);
+        int min =  Integer.parseInt(highlight[1]);
+        int sec = Integer.parseInt(highlight[2]);
+        int duration = hour*3600 + min * 60 + sec;
+        seekBar.setProgress(duration*1000);
+        currentPos = seekBar.getProgress();
+        previewView.seekTo((int)currentPos);
     }
 }
