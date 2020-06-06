@@ -1,5 +1,6 @@
 package com.quickids.playlog.fragment;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
@@ -10,12 +11,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.quickids.playlog.R;
+import com.quickids.playlog.activity.PreviewActivity;
+import com.quickids.playlog.activity.VideoPlayerActivity;
 import com.quickids.playlog.adapter.VideoListAdapter;
 import com.quickids.playlog.model.MatchVideo;
 import com.quickids.playlog.model.ProcessedVideo;
@@ -30,7 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MatchFragment extends Fragment {
+public class MatchFragment extends Fragment implements VideoListAdapter.OnItemClickListener{
 
     ArrayList<Video> matchVideoList = null;
     RecyclerView recyclerView = null;
@@ -111,9 +115,27 @@ public class MatchFragment extends Fragment {
         adapter = new VideoListAdapter(matchVideoList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
-
         //리스너 등록
-        //adapter.setOnItemClickListener(this);
+        adapter.setOnItemClickListener(this);
         return v;
+    }
+
+    @Override
+    public void onItemClick(View v, int position) {
+        Video video = matchVideoList.get(position);
+        String path = video.getPath()+video.getName()+"."+video.getExtn();
+        Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
+        intent.putExtra("path", path);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onItemLongClick(View v, int position) {
+        Video video = matchVideoList.get(position);
+        Intent intent = new Intent(getActivity(), PreviewActivity.class);
+        intent.putExtra("path", video.getPath());
+        intent.putExtra("name", video.getName());
+        intent.putExtra("extn", video.getExtn());
+        startActivity(intent);
     }
 }

@@ -52,7 +52,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         videoIndex = getIntent().getIntExtra("pos", 0);
         videoPath = getIntent().getStringExtra("path");
-        System.out.println("path : " + videoPath);
+
         handler = new Handler();
         mHandler = new Handler();
 

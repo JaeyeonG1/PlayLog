@@ -7,6 +7,7 @@ import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +83,7 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
                         Bitmap p_thumbnail = ThumbnailUtils.extractThumbnail(p_bitmap,360,480);
                         int p_pos = processedFiles[i].getName().lastIndexOf(".");
                         String p_name = processedFiles[i].getName().substring(0,p_pos);
-                        String p_extn = processedFiles[i].getName().substring(pos+1);
+                        String p_extn = processedFiles[i].getName().substring(p_pos+1);
                         long p_lastModified = processedFiles[i].lastModified();
                         Date p_lastModifiedDate = new Date(p_lastModified);
                         String p_date = simpleDateFormat.format(p_lastModifiedDate);
@@ -145,6 +146,7 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
 
         Video video = trainingVideoList.get(position);
         String path = video.getPath()+video.getName()+"."+video.getExtn();
+        Toast.makeText(getContext(), path, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
         intent.putExtra("path", path);
         startActivity(intent);

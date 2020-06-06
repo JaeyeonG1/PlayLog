@@ -48,9 +48,9 @@ public class Editor {
         //객체 움직임 감지 구현부
 
         //split video 구현부
-        ffMpegManager.executeSplitVideoCommand(currentPath,top,0,3500);
+        ffMpegManager.executeSplitVideoCommand(currentPath,top,0,4500);
 
-        ffMpegManager.executeSplitVideoCommand(currentPath,mid,3500,2000); //슛 감지 후 1초(임시)
+        ffMpegManager.executeSplitVideoCommand(currentPath,mid,4500,1000); //슛 감지 후 1초(임시)
         ffMpegManager.executeSplitVideoCommand(currentPath,bottom,5500,0);
         ffMpegManager.executeSlowMotionVideoCommand(mid,filePath+"Processed/Temp/"+name+"temp03."+extn);
         //merge video 구현부
