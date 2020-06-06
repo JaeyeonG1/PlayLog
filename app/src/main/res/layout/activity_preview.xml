@@ -14,26 +14,70 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:background="@color/colorMyDark"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="5">
+            android:orientation="vertical"
+            android:layout_weight="4.5">
 
             <VideoView
+                android:layout_marginStart="25dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/view_preview">
             </VideoView>
         </LinearLayout>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.3">
+            <TextView
+                android:id="@+id/current_pos"
+                android:textSize="12sp"
+                android:layout_marginStart="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="#ffffff"
+                android:text="00:00:00" />
+
+            <TextView
+                android:id="@+id/running_time"
+                android:textSize="12sp"
+                android:layout_marginEnd="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="right"
+                android:background="#ffffff"
+                android:text="00:00:00" />
+
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.2">
+            <SeekBar
+                android:id="@+id/preview_seek_bar"
+                style="@style/Base.Widget.AppCompat.SeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </SeekBar>
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="0.8">
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/button_start">
+                android:id="@+id/button_play"
+                android:text="재생">
             </Button>
 
         </LinearLayout>
@@ -45,7 +89,7 @@
         android:layout_weight="1">
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/higlightList"
             tools:listitem="@layout/item_highlight">
 
