@@ -50,7 +50,6 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
         if (getArguments() != null) {
         }
         setFileList();
-
     }
     public void setFileList(){
         String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/PlayLogVideos/Training/";

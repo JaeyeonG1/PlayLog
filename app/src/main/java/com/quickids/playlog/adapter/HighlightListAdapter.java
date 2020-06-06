@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class HighlightListAdapter extends RecyclerView.Adapter<HighlightListAdapter.HighlightListViewHolder> {
 
     ArrayList<String> list;
-    public HighlightListAdapter(){
-
+    public HighlightListAdapter(ArrayList<String> list){
+        this.list = list;
     }
     @NonNull
     @Override
