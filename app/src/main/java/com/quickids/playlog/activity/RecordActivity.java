@@ -29,6 +29,7 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.camera.core.VideoCapture;
 import androidx.camera.core.VideoCaptureConfig;
+import androidx.camera.core.impl.utils.executor.CameraXExecutors;
 
 import com.quickids.playlog.R;
 import com.quickids.playlog.model.Classifier;
@@ -115,8 +116,8 @@ public class RecordActivity extends AppCompatActivity {
 
         // 경기 녹화일 경우 모터 방향 초기화
         Intent prefIntent = getIntent();
-        if(prefIntent != null){
-            String msg = prefIntent.getExtras().getString("prefInfo", "null");
+        String msg = prefIntent.getExtras().getString("prefInfo", "null");
+        if(msg.equals("prefDone")){
             bts.sendMsg(msg);
         }
 
@@ -126,8 +127,8 @@ public class RecordActivity extends AppCompatActivity {
                             getAssets(),
                             TF_OD_API_MODEL_FILE,
                             TF_OD_API_LABELS_FILE,
-                            2076,
-                            1080,
+                            300,
+                            300,
                             TF_OD_API_IS_QUANTIZED);
         } catch (final IOException e) {
             e.printStackTrace();
@@ -176,8 +177,8 @@ public class RecordActivity extends AppCompatActivity {
             }
         };
         Timer timer = new Timer();
-        // 2초 단위로 분석
-        timer.schedule(tt, 0, 200);
+        // 0.15초 단위로 분석
+        timer.schedule(tt, 0, 150);
     }
 
     /**
@@ -295,14 +296,15 @@ public class RecordActivity extends AppCompatActivity {
                         Log.d("previewBitmap", previewBitmap.getWidth() + ", " + previewBitmap.getHeight());
 
                         // 카메라 촬영 size 를 모델의 input size(300x300) 으로 변환하는 과정
-                        // Bitmap resizedBmp = Bitmap.createScaledBitmap(previewBitmap, RESIZE_WIDTH, RESIZE_HEIGHT, true);
+                        Bitmap resizedBmp = Bitmap.createScaledBitmap(previewBitmap, RESIZE_WIDTH, RESIZE_HEIGHT, true);
 
                         // object detection
-                        final List<Classifier.Recognition> results = detector.recognizeImage(previewBitmap);
+                        final List<Classifier.Recognition> results = detector.recognizeImage(resizedBmp);
 
                         // 일정 조건을 만족하는 결과(minmum confidence 이상)만 저장하는 list
                         final List<Classifier.Recognition> mappedRecognitions = new LinkedList<Classifier.Recognition>();
-                        boolean isFirst = true;
+                        boolean isFirstDetection = true;
+                        boolean isFirstBallDetection = true;
 
                         for (final Classifier.Recognition result : results) {
                             // 실시간으로 확인하기 위해 화면에 detecting 된 것을 그려줌
@@ -335,22 +337,27 @@ public class RecordActivity extends AppCompatActivity {
 
                                 mappedRecognitions.add(result);
 
-                                if(result.getTitle().equals("ball")) {
+                                if(result.getTitle().equals("ball") && isFirstBallDetection == true) {
                                     // raspberryPi 와 통신
                                     float ball_x_location = (left + right) / 2;
 
                                     Log.d("ballLocation", ball_x_location + "");
 
-                                    if(PREVIEW_HEIGHT * 0.75 < ball_x_location){
+                                    if(PREVIEW_HEIGHT * 0.65 < ball_x_location){
                                         bts.sendMsg("right");
                                     }
-                                    else if(PREVIEW_HEIGHT * 0.25 > ball_x_location){
+                                    else if(PREVIEW_HEIGHT * 0.35 > ball_x_location){
                                         bts.sendMsg("left");
                                     }
+                                    else {
+                                        bts.sendMsg("stop");
+                                    }
+
+                                    isFirstBallDetection = false;
                                 }
 
                                 else {
-                                    if(isFirst) {
+                                    if(isFirstDetection) {
                                         // 하이라이트 구간 추가
                                         long currentTime = System.currentTimeMillis();
 
@@ -358,10 +365,15 @@ public class RecordActivity extends AppCompatActivity {
 
                                         highlightTimes.add(videoTime);
 
-                                        isFirst = false;
+                                        isFirstDetection = false;
                                     }
                                 }
                             }
+                        }
+
+                        // ball 이 detecting 이 안된경우
+                        if(isFirstBallDetection == true) {
+                            //bts.sendMsg("stop");
                         }
 
                         // detection 된거 overlay 에 그리기

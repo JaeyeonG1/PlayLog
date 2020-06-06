@@ -84,7 +84,7 @@ public class ObjectDetector implements Classifier {
      * @param assetManager The asset manager to be used to load assets.
      * @param modelFilename The filepath of the model GraphDef protocol buffer.
      * @param labelFilename The filepath of label file for classes.
-     * @param inputSize The size of image input
+     * @param //inputSize The size of image input
      * @param isQuantized Boolean representing model is quantized or not
      */
     public static Classifier create(
