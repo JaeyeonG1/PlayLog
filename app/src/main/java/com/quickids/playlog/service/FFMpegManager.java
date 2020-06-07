@@ -17,6 +17,8 @@ public class FFMpegManager {
     private Context context;
     private ProgressDialog progressDialog;
     private Editor editor;
+    private String tempPath, mainTitle;
+    private int fileCount;
     public void loadFFMpegBinary(Context c, Editor editor){
         this.context = c;
         this.editor = editor;
@@ -100,8 +102,11 @@ public class FFMpegManager {
         }
     }
 
-    public void executeMergeVideoCommand(String[] command){
+    public void executeMergeVideoCommand(String[] command, String tempPath, String mainTitle, int fileCount){
         execFFmpegBinary(command);
+        this.tempPath = tempPath;
+        this.mainTitle = mainTitle;
+        this.fileCount = fileCount;
     }
 
     public void execFFmpegBinary(final String[] command){
@@ -116,6 +121,20 @@ public class FFMpegManager {
                 public void onSuccess(String s) {
                     editor.increaseJobCount();
                     Toast.makeText(context.getApplicationContext(),"작업 완료 :"+Integer.toString(editor.getJobCount())+"/"+Integer.toString(editor.getRequestJobCount()), Toast.LENGTH_SHORT).show();
+                    if(editor.getRequestJobCount() == editor.getJobCount()){
+                        Toast.makeText(context.getApplicationContext(), "모든 작업 완료", Toast.LENGTH_SHORT).show();
+                        try{
+                            for(int i = 0 ; i < fileCount; i ++){
+                                System.out.println(tempPath+mainTitle+"temp0"+Integer.toString(fileCount)+".mp4");
+                                File file = new File(tempPath+mainTitle+Integer.toString(fileCount)+".mp4");
+                                if(file.exists()){
+                                    file.delete();
+                                }
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 @Override
                 public void onProgress(String s) {

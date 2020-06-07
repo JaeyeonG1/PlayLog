@@ -2,6 +2,7 @@ package com.quickids.playlog.service;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.widget.Toast;
 
 import com.quickids.playlog.model.MatchVideo;
 import com.quickids.playlog.model.TrainingVideo;
@@ -80,7 +81,7 @@ public class Editor {
             sb.append(str).append(" ");
         }
         String[] command = cmd.toArray(new String[cmd.size()]);
-        ffMpegManager.executeMergeVideoCommand(command);
+        ffMpegManager.executeMergeVideoCommand(command,filePath+"Processed/Temp/",name, 4);
     }
 
     // 하이라이트 영상 생성
