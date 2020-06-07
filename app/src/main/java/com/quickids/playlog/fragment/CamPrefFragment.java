@@ -43,6 +43,8 @@ public class CamPrefFragment extends Fragment implements View.OnClickListener {
 
     BluetoothService bts;
 
+    boolean isLeftMoving;
+    boolean isRightMoving;
     boolean isLeftSubmit;
     boolean isRightSubmit;
 
@@ -57,6 +59,9 @@ public class CamPrefFragment extends Fragment implements View.OnClickListener {
         }
         lensFacing = CameraX.LensFacing.BACK;
         aspectRatio = AspectRatio.RATIO_16_9;
+
+        isLeftMoving = false;
+        isRightMoving = false;
         isLeftSubmit = false;
         isRightSubmit = false;
     }
@@ -168,10 +173,18 @@ public class CamPrefFragment extends Fragment implements View.OnClickListener {
                 isRightSubmit = true;
                 break;
             case R.id.fabLeft:
-                bts.sendMsg("left");
+                if(!isLeftMoving)
+                    bts.sendMsg("left");
+                else
+                    bts.sendMsg("stop");
+                isLeftMoving = !isLeftMoving;
                 break;
             case R.id.fabRight:
-                bts.sendMsg("right");
+                if(!isRightMoving)
+                    bts.sendMsg("right");
+                else
+                    bts.sendMsg("stop");
+                isRightMoving = !isRightMoving;
                 break;
         }
 

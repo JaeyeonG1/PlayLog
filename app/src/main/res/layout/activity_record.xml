@@ -19,13 +19,9 @@
         android:id="@+id/btn_capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="cameraButton"
         android:rotation="90"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_preview"
-        app:srcCompat="@android:drawable/ic_menu_camera"
-        android:contentDescription="cameraButton"/>
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <com.quickids.playlog.painter.OverlayView
         android:id="@+id/tracking_overlay"
