@@ -4,9 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Environment;
@@ -45,12 +43,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
+import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -98,6 +98,9 @@ public class RecordActivity extends AppCompatActivity {
     private Matrix frameToCropTransform;
     private Matrix cropToFrameTransform;
 
+    String msg;
+    Timer timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,7 +119,7 @@ public class RecordActivity extends AppCompatActivity {
 
         // 경기 녹화일 경우 모터 방향 초기화
         Intent prefIntent = getIntent();
-        String msg = prefIntent.getExtras().getString("prefInfo", "null");
+        msg = prefIntent.getExtras().getString("prefInfo", "null");
         if(msg.equals("prefDone")){
             bts.sendMsg(msg);
         }
@@ -172,11 +175,13 @@ public class RecordActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if(isRecording){
-                    analyzeFrame();
+                    if(msg.equals("prefDone")){
+                        analyzeFrame();
+                    }
                 }
             }
         };
-        Timer timer = new Timer();
+        timer = new Timer();
         // 0.15초 단위로 분석
         timer.schedule(tt, 0, 150);
     }
@@ -242,8 +247,10 @@ public class RecordActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
 
                     recordStartTime = System.currentTimeMillis();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd_HHmmss");
+                    String str = dateFormat.format(new Date(recordStartTime));
                     String filepath = Environment.getExternalStorageDirectory() + "/PlayLogVideos/Match/";
-                    File videoFile = new File(filepath + recordStartTime  + ".mp4");
+                    File videoFile = new File(filepath + "M_" + str  + ".mp4");
                     File highlightFile = new File(filepath + "HighlightTimeTable/" + recordStartTime + ".txt");
                     videoCapture.startRecording(
                             videoFile,
@@ -340,16 +347,16 @@ public class RecordActivity extends AppCompatActivity {
 
                                 mappedRecognitions.add(result);
 
-                                if(result.getTitle().equals("ball") && isFirstBallDetection == true) {
+                                if(result.getTitle().equals("ball") && isFirstBallDetection == true && isRecording) {
                                     // raspberryPi 와 통신
                                     float ball_x_location = (left + right) / 2;
 
                                     Log.d("ballLocation", ball_x_location + "");
 
-                                    if(PREVIEW_HEIGHT * 0.6 < ball_x_location){
+                                    if(PREVIEW_HEIGHT * 0.65 < ball_x_location){
                                         bts.sendMsg("right");
                                     }
-                                    else if(PREVIEW_HEIGHT * 0.4 > ball_x_location){
+                                    else if(PREVIEW_HEIGHT * 0.35 > ball_x_location){
                                         bts.sendMsg("left");
                                     }
                                     else {
@@ -379,9 +386,11 @@ public class RecordActivity extends AppCompatActivity {
                             //bts.sendMsg("stop");
                         }
 
-                        // detection 된거 overlay 에 그리기
-                        tracker.trackResults(mappedRecognitions, 0);
-                        trackingOverlay.postInvalidate();
+                        // 녹화중 detection 된거 overlay 에 그리기
+                        if(isRecording){
+                            tracker.trackResults(mappedRecognitions, 0);
+                            trackingOverlay.postInvalidate();
+                        }
                     }
                 }
         );
@@ -498,8 +507,16 @@ public class RecordActivity extends AppCompatActivity {
     @Override
     public synchronized void onPause() {
         Log.d("", "onPause " + this);
+        if(isRecording){
+            videoCapture.stopRecording();
+            isRecording = false;
+        }
 
-        handlerThread.quitSafely();
+        timer.cancel();
+
+        bts.sendMsg("stop");
+
+        handlerThread.quit();
         try {
             handlerThread.join();
             handlerThread = null;
