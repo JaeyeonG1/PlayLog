@@ -1,5 +1,7 @@
 package com.quickids.playlog.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -19,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.quickids.playlog.R;
 import com.quickids.playlog.activity.EditorActivity;
+import com.quickids.playlog.activity.PreviewActivity;
 import com.quickids.playlog.activity.VideoPlayerActivity;
 import com.quickids.playlog.adapter.VideoListAdapter;
 import com.quickids.playlog.model.ProcessedVideo;
@@ -33,8 +37,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-
 public class TrainingFragment extends Fragment implements VideoListAdapter.OnItemClickListener{
+
+    private final static String PATH_TRAINING = Environment.getExternalStorageDirectory().getAbsolutePath()+"/PlayLogVideos/Training/";
 
     ArrayList<Video> trainingVideoList = null;
     RecyclerView recyclerView = null;
@@ -52,9 +57,8 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
         setFileList();
     }
     public void setFileList(){
-        String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/PlayLogVideos/Training/";
-        File directory = new File(absolutePath);
-        File processedDirectory = new File(absolutePath+"Processed/"); //슬로우 모션 디렉토리
+        File directory = new File(PATH_TRAINING);
+        File processedDirectory = new File(PATH_TRAINING+"Processed/"); //슬로우 모션 디렉토리
         File[] files = directory.listFiles(); //슬로우모션 파일
         File[] processedFiles = processedDirectory.listFiles();
         for(int i = 0; i < files.length; i++){
@@ -71,7 +75,7 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
                 Date lastModifiedDate = new Date(lastModified);
                 String date = simpleDateFormat.format(lastModifiedDate);
-                Video video = new TrainingVideo(thumbnail,absolutePath,name,date,runningTime,extn,fileSize);
+                Video video = new TrainingVideo(thumbnail,PATH_TRAINING,name,date,runningTime,extn,fileSize);
                 trainingVideoList.add(video);
                 //슬로우모션 영상 load
                 if(i<processedFiles.length){
@@ -86,7 +90,7 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
                         long p_lastModified = processedFiles[i].lastModified();
                         Date p_lastModifiedDate = new Date(p_lastModified);
                         String p_date = simpleDateFormat.format(p_lastModifiedDate);
-                        Video p_video = new ProcessedVideo(p_thumbnail,absolutePath+"Processed/",
+                        Video p_video = new ProcessedVideo(p_thumbnail,PATH_TRAINING+"Processed/",
                                 p_name,p_date,p_runningTime,p_extn,p_fileSize);
                         trainingVideoList.add(p_video);
                     }
@@ -152,22 +156,98 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
     }
     @Override
     public void onItemLongClick(View v, int position) {
-        Video selectedVideo = adapter.getItem(position);
-        int videoType = selectedVideo.getVideoType();
-        if(videoType == 200){
+        showDialog(position);
+    }
 
-            String filePath = selectedVideo.getPath();
-            String name = selectedVideo.getName();
-            String extn = selectedVideo.getExtn();
-            Intent intent = new Intent(v.getContext(), EditorActivity.class);
-            intent.putExtra("filePath", filePath);
-            intent.putExtra("videoType", videoType);
-            intent.putExtra("name",name);
-            intent.putExtra("extn",extn);
-            startActivity(intent);
-        }else{
-            Toast.makeText(getContext(),"이미 훈련 영상입니다.", Toast.LENGTH_SHORT).show();
-        }
+    private void showDialog(int position){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("훈련영상 관리");
+        builder.setItems(R.array.menu_training, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int pos) {
+                String[] items = getResources().getStringArray(R.array.menu_training);
+                Video video = adapter.getItem(position);
 
+                switch (items[pos]){
+                    case "수정":
+                        renameFile(video.getPath(), video.getName(), video.getExtn());
+                        break;
+                    case "삭제":
+                        String path = video.getPath()+video.getName()+"."+video.getExtn();
+                        deleteFile(path);
+                        break;
+                    case "슬로우모션 변환":
+                        int videoType = video.getVideoType();
+
+                        if(videoType == 200){
+                            String filePath = video.getPath();
+                            String name = video.getName();
+                            String extn = video.getExtn();
+                            Intent intent = new Intent(getContext(), EditorActivity.class);
+                            intent.putExtra("filePath", filePath);
+                            intent.putExtra("videoType", videoType);
+                            intent.putExtra("name",name);
+                            intent.putExtra("extn",extn);
+                            startActivity(intent);
+                        }
+                        else{
+                            Toast.makeText(getContext(),"이미 처리된 영상입니다.", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void deleteFile(String path){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("동영상 삭제");
+        builder.setMessage("정말 삭제하시겠습니까?");
+        builder.setPositiveButton("예",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        File file = new File(path);
+                        file.delete();
+                        Toast.makeText(getContext(),"삭제 완료.",Toast.LENGTH_LONG).show();
+                    }
+                });
+        builder.setNegativeButton("아니오",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        builder.show();
+    }
+
+    private void renameFile(String path, String name, String extn){
+        EditText edittext = new EditText(getContext());
+        edittext.setText(name);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("동영상 이름 수정");
+        builder.setMessage("수정할 이름을 입력하세요.");
+        builder.setView(edittext);
+        builder.setPositiveButton("확인",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        File file = new File(path + name + "." + extn);
+                        if(file.exists()){
+                            if(edittext.getText().toString() != ""){
+                                String newName = edittext.getText().toString();
+                                File fileNew = new File(path + newName + "." + extn);
+                                file.renameTo(fileNew);
+                            }
+                        }
+                        Toast.makeText(getContext(), edittext.getText().toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+        builder.setNegativeButton("취소",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        builder.show();
     }
 }

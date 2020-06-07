@@ -1,4 +1,21 @@
 <resources>
     <string name="app_name">PlayLog</string>
 
+    <string-array name = "menu_match">
+        <item>"수정"</item>
+        <item>"삭제"</item>
+        <item>"하이라이트 추출"</item>
+    </string-array>
+
+    <string-array name = "menu_training">
+        <item>"수정"</item>
+        <item>"삭제"</item>
+        <item>"슬로우모션 변환"</item>
+    </string-array>
+
+    <string-array name = "menu_highlight">
+        <item>"수정"</item>
+        <item>"삭제"</item>
+    </string-array>
+
 </resources>
