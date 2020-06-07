@@ -168,6 +168,7 @@ public class BTPrefFragment extends Fragment implements CompoundButton.OnChecked
                     timer.schedule(tt, 0, 1000);
                 }
                 else{
+                    bts.sendMsg("prefDone");
                     // 다음 프래그먼트로 전환
                     parentVP.setCurrentItem(1, true);
                 }

@@ -238,6 +238,9 @@ public class RecordActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!isRecording){
+                    String msg = "영상 촬영 시작";
+                    Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
+
                     recordStartTime = System.currentTimeMillis();
                     String filepath = Environment.getExternalStorageDirectory() + "/PlayLogVideos/Match/";
                     File videoFile = new File(filepath + recordStartTime  + ".mp4");
@@ -343,10 +346,10 @@ public class RecordActivity extends AppCompatActivity {
 
                                     Log.d("ballLocation", ball_x_location + "");
 
-                                    if(PREVIEW_HEIGHT * 0.65 < ball_x_location){
+                                    if(PREVIEW_HEIGHT * 0.6 < ball_x_location){
                                         bts.sendMsg("right");
                                     }
-                                    else if(PREVIEW_HEIGHT * 0.35 > ball_x_location){
+                                    else if(PREVIEW_HEIGHT * 0.4 > ball_x_location){
                                         bts.sendMsg("left");
                                     }
                                     else {
@@ -517,6 +520,7 @@ public class RecordActivity extends AppCompatActivity {
     @Override
     public synchronized void onDestroy() {
         Log.d("", "onDestroy " + this);
+        bts.disable();
         super.onDestroy();
     }
 
