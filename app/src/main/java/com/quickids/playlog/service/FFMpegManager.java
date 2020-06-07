@@ -124,9 +124,10 @@ public class FFMpegManager {
                     if(editor.getRequestJobCount() == editor.getJobCount()){
                         Toast.makeText(context.getApplicationContext(), "모든 작업 완료", Toast.LENGTH_SHORT).show();
                         try{
-                            for(int i = 0 ; i < fileCount; i ++){
-                                System.out.println(tempPath+mainTitle+"temp0"+Integer.toString(fileCount)+".mp4");
-                                File file = new File(tempPath+mainTitle+Integer.toString(fileCount)+".mp4");
+                            for(int i = 0 ; i < fileCount+1; i ++){
+
+                                System.out.println(tempPath+mainTitle+"temp0"+Integer.toString(i)+".mp4");
+                                File file = new File(tempPath+mainTitle+"temp0"+Integer.toString(i)+".mp4");
                                 if(file.exists()){
                                     file.delete();
                                 }
