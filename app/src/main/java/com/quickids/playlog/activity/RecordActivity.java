@@ -246,12 +246,21 @@ public class RecordActivity extends AppCompatActivity {
                     String msg = "영상 촬영 시작";
                     Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
 
+                    String filepath;
+                    File videoFile;
                     recordStartTime = System.currentTimeMillis();
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd_HHmmss");
                     String str = dateFormat.format(new Date(recordStartTime));
-                    String filepath = Environment.getExternalStorageDirectory() + "/PlayLogVideos/Match/";
-                    File videoFile = new File(filepath + "M_" + str  + ".mp4");
+                    if(msg.equals("prefDone")){
+                        filepath = Environment.getExternalStorageDirectory() + "/PlayLogVideos/Match/";
+                        videoFile = new File(filepath + "M_" + str  + ".mp4");
+                    }
+                    else{
+                        filepath = Environment.getExternalStorageDirectory() + "/PlayLogVideos/Training/";
+                        videoFile = new File(filepath + "T_" + str  + ".mp4");
+                    }
                     File highlightFile = new File(filepath + "HighlightTimeTable/" + recordStartTime + ".txt");
+
                     videoCapture.startRecording(
                             videoFile,
                             executor,
