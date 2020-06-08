@@ -11,6 +11,7 @@ import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunnin
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class FFMpegManager {
     private FFmpeg ffmpeg;
@@ -19,6 +20,8 @@ public class FFMpegManager {
     private Editor editor;
     private String tempPath, mainTitle;
     private int fileCount;
+    private ArrayList<String> tempFileList;
+    private String [] mergeCommand;
     public void loadFFMpegBinary(Context c, Editor editor){
         this.context = c;
         this.editor = editor;
@@ -102,11 +105,9 @@ public class FFMpegManager {
         }
     }
 
-    public void executeMergeVideoCommand(String[] command, String tempPath, String mainTitle, int fileCount){
-        execFFmpegBinary(command);
-        this.tempPath = tempPath;
-        this.mainTitle = mainTitle;
-        this.fileCount = fileCount;
+    public void executeMergeVideoCommand(String[] command, ArrayList<String> tempFileList){
+        this.mergeCommand = command;
+        this.tempFileList = tempFileList;
     }
 
     public void execFFmpegBinary(final String[] command){
@@ -122,19 +123,8 @@ public class FFMpegManager {
                     editor.increaseJobCount();
                     Toast.makeText(context.getApplicationContext(),"작업 완료 :"+Integer.toString(editor.getJobCount())+"/"+Integer.toString(editor.getRequestJobCount()), Toast.LENGTH_SHORT).show();
                     if(editor.getRequestJobCount() == editor.getJobCount()){
-                        Toast.makeText(context.getApplicationContext(), "모든 작업 완료", Toast.LENGTH_SHORT).show();
-                        try{
-                            for(int i = 0 ; i < fileCount+1; i ++){
-
-                                System.out.println(tempPath+mainTitle+"temp0"+Integer.toString(i)+".mp4");
-                                File file = new File(tempPath+mainTitle+"temp0"+Integer.toString(i)+".mp4");
-                                if(file.exists()){
-                                    file.delete();
-                                }
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
+                        Toast.makeText(context.getApplicationContext(), "분할 작업 완료", Toast.LENGTH_SHORT).show();
+                        execFFmpegBinary(mergeCommand);
                     }
                 }
                 @Override
@@ -148,7 +138,17 @@ public class FFMpegManager {
                 }
                 @Override
                 public void onFinish() {
-                    if(editor.getJobCount() == editor.getRequestJobCount()){
+                    if(editor.getJobCount()-1 == editor.getRequestJobCount()){
+                        try{
+                            for(int i = 0 ; i < tempFileList.size(); i ++){
+                                File file = new File(tempFileList.get(i));
+                                if(file.exists()){
+                                    file.delete();
+                                }
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                         progressDialog.dismiss();
                     }
                 }
@@ -157,9 +157,5 @@ public class FFMpegManager {
             System.out.println("에러메시지");
             e.printStackTrace();
         }
-    }
-
-    public void dismissDialog(){
-        this.progressDialog.dismiss();
     }
 }

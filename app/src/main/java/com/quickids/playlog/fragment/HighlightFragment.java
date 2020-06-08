@@ -25,7 +25,7 @@ import com.quickids.playlog.activity.EditorActivity;
 import com.quickids.playlog.activity.PreviewActivity;
 import com.quickids.playlog.activity.VideoPlayerActivity;
 import com.quickids.playlog.adapter.VideoListAdapter;
-import com.quickids.playlog.model.MatchVideo;
+import com.quickids.playlog.model.HighlightVideo;
 import com.quickids.playlog.model.Video;
 
 import java.io.File;
@@ -63,7 +63,6 @@ public class HighlightFragment extends Fragment implements VideoListAdapter.OnIt
         for(int i = 0; i < files.length; i++){
             if(!files[i].isDirectory()){
                 String runningTime = getRunningTime(files[i].toString());
-                //System.out.println(runningTime);
                 long fileSize = files[i].length();
                 Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(files[i].toString(), MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
                 Bitmap thumbnail = ThumbnailUtils.extractThumbnail(bitmap,360,480);
@@ -75,7 +74,7 @@ public class HighlightFragment extends Fragment implements VideoListAdapter.OnIt
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
                 Date lastModifiedDate = new Date(lastModified);
                 String date = simpleDateFormat.format(lastModifiedDate);
-                Video video = new MatchVideo(thumbnail,PATH_HIGHLIGHT,name,date,runningTime,extn,fileSize);
+                Video video = new HighlightVideo(thumbnail,PATH_HIGHLIGHT,name,date,runningTime,extn,fileSize);
                 highlightVideoList.add(video);
             }
         }
@@ -112,7 +111,6 @@ public class HighlightFragment extends Fragment implements VideoListAdapter.OnIt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_highlight,container,false);
-
         recyclerView = v.findViewById(R.id.recycler_highlight);
         recyclerView.setHasFixedSize(true);
         adapter = new VideoListAdapter(highlightVideoList);
@@ -140,7 +138,7 @@ public class HighlightFragment extends Fragment implements VideoListAdapter.OnIt
     private void showDialog(int position){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("하이라이트 관리");
-        builder.setItems(R.array.menu_training, new DialogInterface.OnClickListener() {
+        builder.setItems(R.array.menu_highlight, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int pos) {
                 String[] items = getResources().getStringArray(R.array.menu_highlight);
                 Video video = adapter.getItem(position);
@@ -169,6 +167,9 @@ public class HighlightFragment extends Fragment implements VideoListAdapter.OnIt
                         File file = new File(fullPath);
                         file.delete();
                         Toast.makeText(getContext(),"삭제 완료.",Toast.LENGTH_LONG).show();
+                        highlightVideoList = new ArrayList<Video>();
+                        setFileList();
+                        adapter.changedData(highlightVideoList);
                     }
                 });
         builder.setNegativeButton("아니오",
@@ -197,6 +198,9 @@ public class HighlightFragment extends Fragment implements VideoListAdapter.OnIt
                                 String newName = edittext.getText().toString();
                                 File fileNew = new File(path + newName + "." + extn);
                                 file.renameTo(fileNew);
+                                highlightVideoList = new ArrayList<Video>();
+                                setFileList();
+                                adapter.changedData(highlightVideoList);
                             }
                         }
                         Toast.makeText(getContext(), edittext.getText().toString(), Toast.LENGTH_LONG).show();

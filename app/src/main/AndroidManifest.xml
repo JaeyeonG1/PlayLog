@@ -38,7 +38,9 @@
             android:screenOrientation="landscape"
             tools:ignore="LockedOrientationActivity"/>
         <activity android:name=".activity.EditorActivity" />
-        <activity android:name=".activity.VideoPlayerActivity"/>
+        <activity android:name=".activity.VideoPlayerActivity"
+            android:screenOrientation="landscape"
+            tools:ignore="LockedOrientationActivity"/>
     </application>
 
 </manifest>

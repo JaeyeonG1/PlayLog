@@ -110,6 +110,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             videoDate = itemView.findViewById(R.id.video_date);
         }
     }
+    public void changedData(ArrayList<Video> list){
+        this.videoList = list;
+        notifyDataSetChanged();
+    }
 
     //리스너 인터페이스 정의
     public interface OnItemClickListener{

@@ -1,5 +1,6 @@
 package com.quickids.playlog.activity;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static androidx.camera.core.CameraX.getContext;
+
 public class PreviewActivity extends AppCompatActivity implements HighlightListAdapter.OnItemClickListener {
 
     VideoView previewView;
@@ -36,7 +39,7 @@ public class PreviewActivity extends AppCompatActivity implements HighlightListA
     int videoIndex;
     double currentPos, totalDuration;
     Handler mHandler, handler;
-    Button playButton;
+    Button extractButton, playButton, preButton, nextButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,51 @@ public class PreviewActivity extends AppCompatActivity implements HighlightListA
         path = getIntent().getStringExtra("path");
         name = getIntent().getStringExtra("name");
         extn = getIntent().getStringExtra("extn");
+
+        extractButton = (Button) findViewById(R.id.button_extract);
+        playButton = findViewById(R.id.button_play);
+        playButton.setText("정지");
+        preButton = findViewById(R.id.button_pre);
+        nextButton = findViewById(R.id.button_next);
+        extractButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), EditorActivity.class);
+                intent.putExtra("filePath", path);
+                intent.putExtra("videoType", 100);
+                intent.putExtra("name",name);
+                intent.putExtra("extn",extn);
+                startActivity(intent);
+            }
+        });
+        preButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                seekBar.setProgress(seekBar.getProgress()-5*1000);
+                currentPos = seekBar.getProgress();
+                previewView.seekTo((int)currentPos);
+            }
+        });
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                seekBar.setProgress(seekBar.getProgress()+5*1000);
+                currentPos = seekBar.getProgress();
+                previewView.seekTo((int)currentPos);
+            }
+        });
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                if(previewView.isPlaying()){
+                    previewView.pause();
+                    playButton.setText("재생");
+                }else{
+                    previewView.start();
+                    playButton.setText("정지");
+                }
+            }
+        });
         videoPath = path+name+"."+extn;
         tempPath = "/storage/emulated/0/PlayLogVideos/Match/HighlightTimeTable/";
         timeTable = name+".txt";
@@ -64,9 +112,6 @@ public class PreviewActivity extends AppCompatActivity implements HighlightListA
         adapter.setOnItemClickListener(this);
         //하이라이트 리스트 초기화
 
-
-        //작업 창 컴포넌트 초기화
-        playButton = (Button) findViewById(R.id.button_play);
 
     }
     public void setVideo(){

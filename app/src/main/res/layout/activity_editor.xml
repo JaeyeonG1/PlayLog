@@ -10,17 +10,66 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/tempJob"/>
+        android:text="Editor"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title">
+    </TextView>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="filepath"
-        android:id="@+id/tempFilePath"/>
+        android:id="@+id/type"
+        android:text="Editor"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title">
+    </TextView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textColor="@color/colorMyDark"
+            android:text="영상이름"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_video_name"
+            android:layout_margin="10dp"
+            android:textColor="@color/colorMyDark"
+            android:text="영상이름"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_margin="10dp"
+            android:textColor="@color/colorMyDark"
+            android:layout_height="wrap_content"
+            android:text="파일경로"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textColor="@color/colorMyDark"
+            android:id="@+id/edit_path"
+            android:text="영상이름"/>
+    </LinearLayout>
+
     <Button
         android:id="@+id/tempButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="tempButton"/>
+        android:backgroundTint="#FF9800"
+        android:text="edit"
+        android:textColor="#ffffff" />
 
 </LinearLayout>

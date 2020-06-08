@@ -79,22 +79,27 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
                 trainingVideoList.add(video);
                 //슬로우모션 영상 load
                 if(i<processedFiles.length){
-                    if(!processedFiles[i].isDirectory()){
-                        String p_runningTime = getRunningTime(processedFiles[i].toString());
-                        long p_fileSize = processedFiles[i].length();
-                        Bitmap p_bitmap = ThumbnailUtils.createVideoThumbnail(processedFiles[i].toString(), MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
-                        Bitmap p_thumbnail = ThumbnailUtils.extractThumbnail(p_bitmap,360,480);
-                        int p_pos = processedFiles[i].getName().lastIndexOf(".");
-                        String p_name = processedFiles[i].getName().substring(0,p_pos);
-                        String p_extn = processedFiles[i].getName().substring(p_pos+1);
-                        long p_lastModified = processedFiles[i].lastModified();
-                        Date p_lastModifiedDate = new Date(p_lastModified);
-                        String p_date = simpleDateFormat.format(p_lastModifiedDate);
-                        Video p_video = new ProcessedVideo(p_thumbnail,PATH_TRAINING+"Processed/",
-                                p_name,p_date,p_runningTime,p_extn,p_fileSize);
-                        trainingVideoList.add(p_video);
-                    }
+
                 }
+            }
+        }
+        for(int i = 0 ; i < processedFiles.length; i ++){
+            if(!processedFiles[i].isDirectory()){
+                String pattern = "yyyy-MM-dd";
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+                String p_runningTime = getRunningTime(processedFiles[i].toString());
+                long p_fileSize = processedFiles[i].length();
+                Bitmap p_bitmap = ThumbnailUtils.createVideoThumbnail(processedFiles[i].toString(), MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
+                Bitmap p_thumbnail = ThumbnailUtils.extractThumbnail(p_bitmap,360,480);
+                int p_pos = processedFiles[i].getName().lastIndexOf(".");
+                String p_name = processedFiles[i].getName().substring(0,p_pos);
+                String p_extn = processedFiles[i].getName().substring(p_pos+1);
+                long p_lastModified = processedFiles[i].lastModified();
+                Date p_lastModifiedDate = new Date(p_lastModified);
+                String p_date = simpleDateFormat.format(p_lastModifiedDate);
+                Video p_video = new ProcessedVideo(p_thumbnail,PATH_TRAINING+"Processed/",
+                        p_name,p_date,p_runningTime,p_extn,p_fileSize);
+                trainingVideoList.add(p_video);
             }
         }
     }
@@ -209,6 +214,9 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
                         File file = new File(path);
                         file.delete();
                         Toast.makeText(getContext(),"삭제 완료.",Toast.LENGTH_LONG).show();
+                        trainingVideoList = new ArrayList<Video>();
+                        setFileList();
+                        adapter.changedData(trainingVideoList);
                     }
                 });
         builder.setNegativeButton("아니오",
@@ -237,6 +245,9 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
                                 String newName = edittext.getText().toString();
                                 File fileNew = new File(path + newName + "." + extn);
                                 file.renameTo(fileNew);
+                                trainingVideoList = new ArrayList<Video>();
+                                setFileList();
+                                adapter.changedData(trainingVideoList);
                             }
                         }
                         Toast.makeText(getContext(), edittext.getText().toString(), Toast.LENGTH_LONG).show();

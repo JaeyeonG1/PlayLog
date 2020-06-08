@@ -138,6 +138,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 if(videoView.isPlaying()){
+                    videoView.pause();
                     pause.setImageResource(R.drawable.ic_play_circle_filled_black_24dp);
                 }else{
                     videoView.start();

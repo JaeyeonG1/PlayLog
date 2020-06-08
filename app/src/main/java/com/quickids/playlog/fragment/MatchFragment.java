@@ -179,6 +179,9 @@ public class MatchFragment extends Fragment implements VideoListAdapter.OnItemCl
                         File file = new File(path);
                         file.delete();
                         Toast.makeText(getContext(),"삭제 완료.",Toast.LENGTH_LONG).show();
+                        matchVideoList = new ArrayList<Video>();
+                        setFileList();
+                        adapter.changedData(matchVideoList);
                     }
                 });
         builder.setNegativeButton("아니오",
@@ -207,6 +210,9 @@ public class MatchFragment extends Fragment implements VideoListAdapter.OnItemCl
                                 String newName = edittext.getText().toString();
                                 File fileNew = new File(path + newName + "." + extn);
                                 file.renameTo(fileNew);
+                                matchVideoList = new ArrayList<Video>();
+                                setFileList();
+                                adapter.changedData(matchVideoList);
                             }
                         }
                         Toast.makeText(getContext(), edittext.getText().toString(), Toast.LENGTH_LONG).show();
