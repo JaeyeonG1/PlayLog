@@ -4,12 +4,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -17,7 +14,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.quickids.playlog.R;
 import com.quickids.playlog.adapter.MainFragmentAdapter;
 import com.quickids.playlog.dialog.ModeSelectionDialogFragment;
-import com.quickids.playlog.fragment.FullFragment;
+import com.quickids.playlog.fragment.RecordFragment;
 import com.quickids.playlog.fragment.HighlightFragment;
 import com.quickids.playlog.fragment.MatchFragment;
 import com.quickids.playlog.fragment.TrainingFragment;
@@ -31,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Fragment> fragList;
     ArrayList<String> fragNameList;
 
-    DrawerLayout drawerLayout;
-    View drawerView;
     Toolbar toolbar;
     ViewPager viewPager;
     MainFragmentAdapter fragmentAdapter;
@@ -45,12 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Toolbar 를 Activity 의 AppBar 로 설정
         toolbar = findViewById(R.id.toolbar_holder);
-        drawerLayout = findViewById(R.id.drawer_layout);
-        drawerView = findViewById(R.id.drawerView);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 홈 버튼 활성화
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_24dp); // 아이콘 대체
+        getSupportActionBar().setTitle("PlayLog");
 
         // 어댑터에 추가할 항목 설정
         fragList = new ArrayList<>();
@@ -70,17 +62,16 @@ public class MainActivity extends AppCompatActivity {
     // SplashActivity 에서 정상적으로 실행되었는지 확인
     private void setFragments(int activityCode){
         if(activityCode == RIGHT_CODE){
-            fragList.add(new FullFragment());
+            fragList.add(new RecordFragment());
             fragList.add(new MatchFragment());
             fragList.add(new HighlightFragment());
             fragList.add(new TrainingFragment());
-            fragNameList.add("News");
+            fragNameList.add("Record");
             fragNameList.add("Match");
             fragNameList.add("HighLight");
             fragNameList.add("Training");
             getSupportActionBar().setBackgroundDrawable(
                     new ColorDrawable(getResources().getColor(R.color.colorWhite)));
-            getSupportActionBar().setTitle("");
         }
         else{ // Code 정상 아닐 시 종료
             finish();
@@ -98,27 +89,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home : // 뒤로가기 버튼 클릭
-                drawerLayout.openDrawer(drawerView);
-                return true ;
             case R.id.action_record : // 녹화 버튼 클릭
                 ModeSelectionDialogFragment ms = ModeSelectionDialogFragment.getInstance();
                 ms.show(getSupportFragmentManager(), ModeSelectionDialogFragment.TAG_SELECTION_DIALOG);
                 return true ;
             default :
                 return super.onOptionsItemSelected(item) ;
-        }
-    }
-
-    // 뒤로가기 버튼 눌렸을 때 동작
-    @Override
-    public void onBackPressed() {
-        // Drawer 열려있으면 닫기
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
         }
     }
 }

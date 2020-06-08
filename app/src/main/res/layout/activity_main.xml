@@ -1,31 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
+
+    <!-- Main Activity 실제 요소 -->
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#0AFF9800"
-    android:id="@+id/drawer_layout"
     tools:context=".activity.MainActivity">
-
-    <!-- Main Activity 실제 요소 -->
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".activity.MainActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_holder"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorMyDark"
-        app:titleTextColor="#ffffff"/>
+        android:layout_height="?attr/actionBarSize"/>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager_holder"
@@ -39,21 +27,6 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/tab_item_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/tab_item_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
     </com.google.android.material.tabs.TabLayout>
 
-    </LinearLayout>
-
-    <!-- drawer navigation 추가 -->
-    <include layout="@layout/drawer_navigation"/>
-
-</androidx.drawerlayout.widget.DrawerLayout>
+</LinearLayout>

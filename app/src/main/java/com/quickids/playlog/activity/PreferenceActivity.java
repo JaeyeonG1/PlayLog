@@ -1,25 +1,14 @@
 package com.quickids.playlog.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
 
-import com.google.android.material.tabs.TabLayout;
 import com.quickids.playlog.R;
-import com.quickids.playlog.adapter.MainFragmentAdapter;
 import com.quickids.playlog.adapter.PresetFragmentAdapter;
 import com.quickids.playlog.fragment.BTPrefFragment;
 import com.quickids.playlog.fragment.CamPrefFragment;
-import com.quickids.playlog.fragment.FullFragment;
-import com.quickids.playlog.fragment.HighlightFragment;
-import com.quickids.playlog.fragment.MatchFragment;
-import com.quickids.playlog.fragment.TrainingFragment;
 import com.quickids.playlog.service.BluetoothService;
 import com.quickids.playlog.util.NonSwipeViewPager;
 
