@@ -261,4 +261,9 @@ public class PreviewActivity extends AppCompatActivity implements HighlightListA
         currentPos = seekBar.getProgress();
         previewView.seekTo((int)currentPos);
     }
+
+    @Override
+    public void onLongClickListener(View view, int pos) {
+        adapter.deleteList(pos);
+    }
 }

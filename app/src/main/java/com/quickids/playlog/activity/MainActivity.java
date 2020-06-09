@@ -32,12 +32,17 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     MainFragmentAdapter fragmentAdapter;
     TabLayout tab;
-
+    MatchFragment matchFragment;
+    HighlightFragment highlightFragment;
+    TrainingFragment trainingFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        matchFragment = new MatchFragment();
+        highlightFragment = new HighlightFragment();
+        trainingFragment = new TrainingFragment();
         // Toolbar 를 Activity 의 AppBar 로 설정
         toolbar = findViewById(R.id.toolbar_holder);
 
@@ -63,9 +68,9 @@ public class MainActivity extends AppCompatActivity {
     private void setFragments(int activityCode){
         if(activityCode == RIGHT_CODE){
             fragList.add(new RecordFragment());
-            fragList.add(new MatchFragment());
-            fragList.add(new HighlightFragment());
-            fragList.add(new TrainingFragment());
+            fragList.add(matchFragment);
+            fragList.add(highlightFragment);
+            fragList.add(trainingFragment);
             fragNameList.add("Record");
             fragNameList.add("Match");
             fragNameList.add("HighLight");
@@ -96,5 +101,10 @@ public class MainActivity extends AppCompatActivity {
             default :
                 return super.onOptionsItemSelected(item) ;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

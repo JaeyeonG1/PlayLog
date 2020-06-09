@@ -30,7 +30,10 @@ public class HighlightListAdapter extends RecyclerView.Adapter<HighlightListAdap
         HighlightListViewHolder vh = new HighlightListViewHolder(view);
         return vh;
     }
-
+    public void deleteList(int pos){
+        list.remove(pos);
+        notifyDataSetChanged();
+    }
     @Override
     public void onBindViewHolder(@NonNull HighlightListViewHolder holder, int position) {
         String highlightTime = list.get(position);
@@ -67,9 +70,22 @@ public class HighlightListAdapter extends RecyclerView.Adapter<HighlightListAdap
                     }
                 }
             });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int pos = getAdapterPosition();
+                    if(pos != RecyclerView.NO_POSITION){
+                        if(listener != null){
+                            listener.onLongClickListener(view, pos);
+                        }
+                    }
+                    return false;
+                }
+            });
         }
     }
     public interface OnItemClickListener{
         void onItemClick(View view, int pos);
+        void onLongClickListener(View view, int pos);
     }
 }

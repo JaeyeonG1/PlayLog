@@ -47,6 +47,14 @@ public class MatchFragment extends Fragment implements VideoListAdapter.OnItemCl
     RecyclerView recyclerView = null;
     VideoListAdapter adapter = null;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        matchVideoList = new ArrayList<Video>();
+        setFileList();
+        adapter.changedData(matchVideoList);
+    }
+
     public MatchFragment() {
         matchVideoList = new ArrayList<Video>();
     }

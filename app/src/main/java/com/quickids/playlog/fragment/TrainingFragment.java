@@ -45,6 +45,13 @@ public class TrainingFragment extends Fragment implements VideoListAdapter.OnIte
     RecyclerView recyclerView = null;
     VideoListAdapter adapter = null;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        trainingVideoList = new ArrayList<Video>();
+        setFileList();
+        adapter.changedData(trainingVideoList);
+    }
     public TrainingFragment() {
         trainingVideoList = new ArrayList<Video>();
     }

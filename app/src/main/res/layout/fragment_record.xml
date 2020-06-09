@@ -31,7 +31,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.3"
+            android:layout_weight="0.5"
             android:gravity="center"
             android:text="촬영 시작시 가로모드로 자동으로 촬영됩니다."
             android:textSize="20sp"/>
@@ -52,7 +52,8 @@
             android:layout_marginHorizontal="20dp"
             android:text="경기 영상"
             android:textSize="25sp"
-            android:background="@color/colorMatch"
+            android:background="@android:color/holo_orange_dark"
+            android:textColor="#ffffff"
             android:layout_gravity="center"/>
 
         <Button
@@ -63,7 +64,8 @@
             android:layout_marginHorizontal="20dp"
             android:text="훈련 영상"
             android:textSize="25sp"
-            android:background="@color/colorTraining"
+            android:textColor="#ffffff"
+            android:background="@android:color/holo_blue_dark"
             android:layout_gravity="center" />
 
     </LinearLayout>

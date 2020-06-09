@@ -44,6 +44,13 @@ public class HighlightFragment extends Fragment implements VideoListAdapter.OnIt
     RecyclerView recyclerView = null;
     VideoListAdapter adapter = null;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        highlightVideoList = new ArrayList<Video>();
+        setFileList();
+        adapter.changedData(highlightVideoList);
+    }
     public HighlightFragment() {
         highlightVideoList = new ArrayList<Video>();
     }
