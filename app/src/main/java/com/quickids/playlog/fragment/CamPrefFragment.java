@@ -3,26 +3,21 @@ package com.quickids.playlog.fragment;
 import android.content.Intent;
 import android.graphics.Matrix;
 import android.os.Bundle;
-import android.support.v4.media.session.IMediaControllerCallback;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.CameraX;
 import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
-import androidx.camera.core.VideoCapture;
-import androidx.camera.core.VideoCaptureConfig;
 import androidx.fragment.app.Fragment;
 
 import com.quickids.playlog.R;

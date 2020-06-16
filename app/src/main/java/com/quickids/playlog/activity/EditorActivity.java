@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.quickids.playlog.R;
 import com.quickids.playlog.model.MatchVideo;
 import com.quickids.playlog.model.TrainingVideo;
-import com.quickids.playlog.model.Video;
 import com.quickids.playlog.service.Editor;
 
 import java.io.IOException;

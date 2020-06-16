@@ -27,7 +27,6 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.camera.core.VideoCapture;
 import androidx.camera.core.VideoCaptureConfig;
-import androidx.camera.core.impl.utils.executor.CameraXExecutors;
 
 import com.quickids.playlog.R;
 import com.quickids.playlog.model.Classifier;
@@ -98,7 +97,7 @@ public class RecordActivity extends AppCompatActivity {
     private Matrix frameToCropTransform;
     private Matrix cropToFrameTransform;
 
-    String msg;
+    String status;
     Timer timer;
 
     @Override
@@ -119,9 +118,9 @@ public class RecordActivity extends AppCompatActivity {
 
         // 경기 녹화일 경우 모터 방향 초기화
         Intent prefIntent = getIntent();
-        msg = prefIntent.getExtras().getString("prefInfo", "null");
-        if(msg.equals("prefDone")){
-            bts.sendMsg(msg);
+        status = prefIntent.getExtras().getString("prefInfo", "null");
+        if(status.equals("prefDone")){
+            bts.sendMsg(status);
         }
 
         try {
@@ -175,7 +174,7 @@ public class RecordActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if(isRecording){
-                    if(msg.equals("prefDone")){
+                    if(status.equals("prefDone")){
                         analyzeFrame();
                     }
                 }
@@ -251,7 +250,7 @@ public class RecordActivity extends AppCompatActivity {
                     recordStartTime = System.currentTimeMillis();
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd_HHmmss");
                     String str = dateFormat.format(new Date(recordStartTime));
-                    if(msg.equals("prefDone")){
+                    if(status.equals("prefDone")){
                         filepath = Environment.getExternalStorageDirectory() + "/PlayLogVideos/Match/";
                         videoFile = new File(filepath + "M_" + str  + ".mp4");
                     }

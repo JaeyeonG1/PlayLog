@@ -9,7 +9,6 @@ import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.quickids.playlog.R;
 import com.quickids.playlog.activity.EditorActivity;
-import com.quickids.playlog.activity.PreviewActivity;
 import com.quickids.playlog.activity.VideoPlayerActivity;
 import com.quickids.playlog.adapter.VideoListAdapter;
 import com.quickids.playlog.model.ProcessedVideo;

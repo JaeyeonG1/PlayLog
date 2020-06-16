@@ -21,8 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.quickids.playlog.R;
-import com.quickids.playlog.activity.EditorActivity;
-import com.quickids.playlog.activity.PreviewActivity;
 import com.quickids.playlog.activity.VideoPlayerActivity;
 import com.quickids.playlog.adapter.VideoListAdapter;
 import com.quickids.playlog.model.HighlightVideo;

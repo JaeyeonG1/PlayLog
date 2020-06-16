@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.quickids.playlog.R;
-import com.quickids.playlog.activity.MainActivity;
 import com.quickids.playlog.activity.PreferenceActivity;
 import com.quickids.playlog.activity.RecordActivity;
 
